@@ -5,15 +5,13 @@ import Data.Data
 import Data.Generics.Zipper
 
 data Exp = Add Exp Exp
+         | Sub Exp Exp
          | Mul Exp Exp
+         | EqualsTo Exp Exp
+         | Or Exp Exp
+         | And Exp Exp
+         | LessThen Exp Exp
+         | MoreThen Exp Exp
          | Const Int
          | Var String
          deriving (Show, Data)
-
-data Condition = EqualsTo Condition Condition
-               | Or Condition Condition
-               | And Condition Condition
-               | LessThen Condition Condition
-               | MoreThen Condition Condition
-               | Exp Exp
-               deriving (Show, Data)
