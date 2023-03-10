@@ -16,11 +16,11 @@ c = EqualsTo (Exp(Const 4))  (Exp(Const 2))
 --           |  Exp
 
 pCondition :: Parser Condition
-pCondition =  a  <$> pNestedCondition <*> token' "==" <*> pCondition
-          <|> b  <$> pNestedCondition <*> token' "||" <*> pCondition
-          <|> c  <$> pNestedCondition <*> token' "&&" <*> pCondition
-          <|> d  <$> pNestedCondition <*> token' "<" <*> pCondition
-          <|> e  <$> pNestedCondition <*> token' ">" <*> pCondition
+pCondition =  a  <$> pNestedCondition <*> token' "==" <*> pNestedCondition
+          <|> b  <$> pNestedCondition <*> token' "||" <*> pNestedCondition
+          <|> c  <$> pNestedCondition <*> token' "&&" <*> pNestedCondition
+          <|> d  <$> pNestedCondition <*> token' "<" <*> pNestedCondition
+          <|> e  <$> pNestedCondition <*> token' ">" <*> pNestedCondition
           <|> f  <$> pNestedCondition
         where a x _ z = EqualsTo x z
               b x _ z = Or x z
