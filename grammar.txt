@@ -1,0 +1,60 @@
+
+pLinguagem: pFuncs
+
+pFuncs: id '(' pIds ')' '{' pStatements '}'
+
+pStatements: pDecl ';' pStatements
+		   | pFor pStatements
+		   | pWhile pStatements
+		   | pIf pStatements
+		   | empty     
+
+
+pBloco: '{'  pStatements  '}' 
+	   | pStatements
+
+
+# Declarações com tipos
+pDecl: int id '=' pExp
+	 | string id '=' pExp
+
+# Atribuições
+pAtrib: id '=' pExp
+
+
+# Para já sem else if'sem
+pIf: if '(' pCond ')' pBloco  else pBloco 
+   | if '(' pCond ')' pBloco 
+
+pFor: for '('  pForin  ')'  pBloco
+
+
+pForin: pDecl ';' pCond ';' pAtrib
+	  | pAtrib ';' pCond ';' pAtrib
+	  | ';' pCond ';' pAtrib
+
+
+
+pExp: Termo '+' pExp
+  	| Termo '-' pExp
+    | Termo
+
+Termo: Fator '*' Termo
+      | Fator '/' Termo
+      | Fator
+
+Fator: int
+     | var
+     | '(' pExp ')'
+
+
+pCond: pNestedcond '==' pCond
+	 | pNestedcond '&&' pCond
+	 | pNestedcond '<' pCond
+	 | pNestedcond '>' pCond
+	 | pExp 
+
+pNestedcond: pExp
+		 | '(' pNestedcond ')'
+
+

@@ -65,9 +65,11 @@ pExp9 = id <$> pFactor
 
 pFactor :: Parser Exp
 pFactor =  f   <$> number
-       <|> Var <$> ident
-       <|> g   <$> enclosedBy (symbol' '(')
+       <|> g   <$> ident
+       <|> h   <$> enclosedBy (symbol' '(')
                               pExp
                               (symbol' ')')
-       where f a = Const (read a)
-             g a = a
+       where 
+            f r1 = Const (read r1)
+            g r1 = Var r1
+            h r1  = r1 
