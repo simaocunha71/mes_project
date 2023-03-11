@@ -11,9 +11,10 @@ langParser input =  fst $ head $ pLang input
 pLang = pFuncs 
 
 pFuncs :: Parser [Func]
-pFuncs = f <$> pType <*> ident <*> symbol' '(' <*> pParameters <*> symbol' ')' <*> symbol' '{' <*> pStatements <*> symbol' '}'
+pFuncs = f <$> spaces <*> pType <*> ident <*> symbol' '(' <*> pParameters <*> symbol' ')' <*> symbol' '{' <*> pStatements <*> symbol' '}' <*> pFuncs
+      <|> succeed []
         where 
-          f r1 r2 r3 r4 r5 r6 r7 r8 = [FunctionDeclaration r1 r2 r4 r7]
+          f r0 r1 r2 r3 r4 r5 r6 r7 r8 r9 = (FunctionDeclaration r1 r2 r4 r7):r9
 
 pIds :: Parser [String]
 pIds =    f <$> ident <*> symbol' ',' <*> pIds
@@ -37,6 +38,7 @@ pType = f <$>  token' "int"
 pParameters :: Parser [Par]
 pParameters = f <$> pParameter 
             <|> g <$> pParameter <*> symbol' ','  <*> pParameters
+            <|> succeed []
             where 
               f r1 = [r1]
               g r1 r2 r3  = r1:r3
