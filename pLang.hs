@@ -53,11 +53,24 @@ pParameter = f <$>  token' "int" <*> ident
 pStatements :: Parser [Stat] 
 pStatements =  f <$> pDecl <*> symbol' ';'  <*> pStatements
             <|> g <$> pIf <*> pStatements 
+            <|> h <$> pFuncCall <*> symbol' ';'  <*> pStatements
             <|> succeed []
               where 
                 f r1 r2 r3 = r1:r3
                 g r1 r2 = r1:r2
+                h r1 r2 r3 = r1:r3
 
+pFuncCall :: Parser Stat 
+pFuncCall = f <$> ident <*> (symbol' '(') <*>  (zeroOrMore ident)  <*> (symbol' ')') 
+            where 
+                f r1 r2 r3 r4 = FunctionCall r1 r3
+
+pIf :: Parser Stat
+pIf = f <$> token' "if" <*> symbol' '(' <*> pCond <*> symbol' ')' <*> pBloco
+    <|> g <$> token' "if" <*> symbol' '(' <*> pCond <*> symbol' ')' <*> pBloco <*> token' "else"  <*> pBloco
+    where 
+        f r1 r2 r3 r4 r5  = ITE r3 r5 []
+        g r1 r2 r3 r4 r5 r6 r7 = ITE r3 r5 r7 
 
 pDecl :: Parser Stat
 pDecl = f <$>  token' "int"  <*> ident <*> symbol' '=' <*> pExp
@@ -70,13 +83,6 @@ pBloco :: Parser [Stat]
 pBloco = f <$> symbol' '{' <*>  pStatements <*> symbol' '}'
         where 
             f r1 r2 r3 = r2
-
-pIf :: Parser Stat
-pIf = f <$> token' "if" <*> symbol' '(' <*> pCond <*> symbol' ')' <*> pBloco
-    <|> g <$> token' "if" <*> symbol' '(' <*> pCond <*> symbol' ')' <*> pBloco <*> token' "else"  <*> pBloco
-    where 
-        f r1 r2 r3 r4 r5  = ITE r3 r5 []
-        g r1 r2 r3 r4 r5 r6 r7 = ITE r3 r5 r7 
 
 
 

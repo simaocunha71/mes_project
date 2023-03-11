@@ -26,6 +26,7 @@ data Stat = Assign String Exp --TODO
           | ITE Exp [Stat] [Stat]
           | While Exp [Stat] --TODO
           | For Exp Exp Exp [Stat] --TODO (last priority)
+          | FunctionCall String [String] --TODO
           deriving (Show, Data)
           
 -- Data type of type
@@ -41,6 +42,5 @@ data Par = Parameter Type String
 
 -- Data type of function
 data Func = FunctionDeclaration Type String [Par] [Stat]
-          | FunctionCall String [String] --TODO
             deriving (Show, Data)
 
