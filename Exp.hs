@@ -18,7 +18,8 @@ e = Add (Const 3) (Mul (Const 4) (Const 2))
 --        |  '('  Exp ')'
 
 pExp :: Parser Exp
-pExp = id <$> pExp1
+pExp = f <$> spaces <*> pExp1
+     where f a b = b
 
 pExp1 :: Parser Exp
 pExp1 = id <$> pExp2
@@ -54,8 +55,10 @@ pExp6 =  f <$> pExp7 <*> symbol' '+' <*> pExp6
 
 pExp7 :: Parser Exp
 pExp7 =  f <$> pExp8 <*> symbol' '*' <*> pExp7
+     <|> g <$> pExp8 <*> symbol' '/' <*> pExp7
      <|> id <$> pExp8
         where f a _ c = Mul a c
+              g a _ c = Div a c
 
 pExp8 :: Parser Exp
 pExp8 = id <$> pExp9

@@ -8,6 +8,7 @@ import Data.Generics.Zipper
 data Exp = Add Exp Exp
          | Sub Exp Exp
          | Mul Exp Exp
+         | Div Exp Exp
          | Const Int
          | Var String
          | EqualsTo Exp Exp
@@ -19,12 +20,12 @@ data Exp = Add Exp Exp
          deriving (Show, Data)
 
 -- Data type of statements
-data Stat = Assign String Exp
+data Stat = Assign String Exp --TODO
           | Declare Type String Exp
-          | DeclAssign Type String Exp
+          | DeclAssign Type String Exp --TODO
           | ITE Exp [Stat] [Stat]
-          | While Exp [Stat]
-          | For Exp Exp Exp [Stat]
+          | While Exp [Stat] --TODO
+          | For Exp Exp Exp [Stat] --TODO (last priority)
           deriving (Show, Data)
           
 -- Data type of type
@@ -40,6 +41,6 @@ data Par = Parameter Type String
 
 -- Data type of function
 data Func = FunctionDeclaration Type String [Par] [Stat]
-          | FunctionCall String [String]
+          | FunctionCall String [String] --TODO
             deriving (Show, Data)
 
