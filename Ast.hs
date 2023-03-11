@@ -4,7 +4,7 @@ module Ast where
 import Data.Data
 import Data.Generics.Zipper
 
-
+-- Data type of expressions
 data Exp = Add Exp Exp
          | Sub Exp Exp
          | Mul Exp Exp
@@ -18,6 +18,7 @@ data Exp = Add Exp Exp
          | Exp Exp
          deriving (Show, Data)
 
+-- Data type of statements
 data Stat = Assign String Exp
           | Declare Type String Exp
           | DeclAssign Type String Exp
@@ -25,13 +26,20 @@ data Stat = Assign String Exp
           | While Exp [Stat]
           | For Exp Exp Exp [Stat]
           deriving (Show, Data)
-
+          
+-- Data type of type
 data Type = Int 
           | Char 
           | String 
+          | Void
           deriving (Show, Data)
 
--- NOME da função | Lista de vars (argumentos) | Lista de código dentro da funçãoi
-data Func = FDeclare String [String] [Stat]
+-- Data type of parameter (function args in a function declaration)
+data Par = Parameter Type String
+                deriving (Show, Data)
+
+-- Data type of function
+data Func = FunctionDeclaration Type String [Par] [Stat]
+          | FunctionCall String [String]
             deriving (Show, Data)
 

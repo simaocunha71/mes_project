@@ -119,7 +119,7 @@ zeroOrMore :: Parser a -> Parser [a]
 zeroOrMore p = succeed []
             <|> g <$> p <*> zeroOrMore p
             where g r1 r2 = r1:r2
-  
+
 
 spaces = zeroOrMore (satisfy isSpace)
 

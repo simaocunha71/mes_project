@@ -4,17 +4,16 @@ import Prelude hiding ((<*>),(<$>))
 import Parser
 import Ast
 import Exp
+import Tests
 
-
-teste_1 = "f(altura){int x = 2;}"
-teste_2 =  "f(altura){if(x>2){}}"
+langParser input =  fst $ head $ pLang input
 
 pLang = pFuncs 
 
 pFuncs :: Parser [Func]
-pFuncs = f <$> ident <*> symbol' '(' <*> pIds <*> symbol' ')' <*> symbol' '{' <*> pStatements <*> symbol' '}'
+pFuncs = f <$> pType <*> ident <*> symbol' '(' <*> pParameters <*> symbol' ')' <*> symbol' '{' <*> pStatements <*> symbol' '}'
         where 
-          f r1 r2 r3 r4 r5 r6 r7 = [FDeclare r1 r3 r6]
+          f r1 r2 r3 r4 r5 r6 r7 r8 = [FunctionDeclaration r1 r2 r4 r7]
 
 pIds :: Parser [String]
 pIds =    f <$> ident <*> symbol' ',' <*> pIds
@@ -23,6 +22,31 @@ pIds =    f <$> ident <*> symbol' ',' <*> pIds
       where 
           f r1 r2 r3 = r1:r3
           g r1 = [r1]
+
+pType :: Parser Type
+pType = f <$>  token' "int"
+      <|> g <$> token' "char"
+      <|> h <$> token' "string"
+      <|> i <$> token' "void"
+      where
+        f r1 = Int 
+        g r1 = Char 
+        h r1 = String
+        i r1 = Void
+
+pParameters :: Parser [Par]
+pParameters = f <$> pParameter 
+            <|> g <$> pParameter <*> symbol' ','  <*> pParameters
+            where 
+              f r1 = [r1]
+              g r1 r2 r3  = r1:r3
+
+pParameter :: Parser Par
+pParameter = f <$>  token' "int" <*> ident 
+           <|> g <$> token' "string" <*> ident 
+          where
+            f r1 r2 = Parameter Int r2
+            g r1 r2 = Parameter String r2
 
 pStatements :: Parser [Stat] 
 pStatements =  f <$> pDecl <*> symbol' ';'  <*> pStatements
