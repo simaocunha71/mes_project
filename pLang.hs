@@ -54,11 +54,13 @@ pStatements :: Parser [Stat]
 pStatements =  f <$> pDecl <*> symbol' ';'  <*> pStatements
             <|> g <$> pIf <*> pStatements 
             <|> h <$> pFuncCall <*> symbol' ';'  <*> pStatements
+            <|> i <$> pWhile <*> pStatements
             <|> succeed []
               where 
                 f r1 r2 r3 = r1:r3
-                g r1 r2 = r1:r2
+                g r1 r2    = r1:r2
                 h r1 r2 r3 = r1:r3
+                i r1 r2    = r1:r2
 
 pFuncCall :: Parser Stat 
 pFuncCall = f <$> ident <*> (symbol' '(') <*>  (zeroOrMore ident)  <*> (symbol' ')') 
@@ -107,3 +109,8 @@ pNestedCond =  a <$> pExp
                                      (symbol' ')')
                 where a x = Exp x
                       b x = x
+
+pWhile :: Parser Stat
+pWhile = f <$> token' "while" <*> symbol' '(' <*> pCond <*> symbol' ')' <*> pBloco
+      where 
+        f r1 r2 r3 r4 r5 = While r3 r5
