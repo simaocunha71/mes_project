@@ -24,8 +24,8 @@ data Stat = Assign String Exp --TODO
           | Declare Type String Exp
           | DeclAssign Type String Exp --TODO
           | ITE Exp [Stat] [Stat]
-          | While Exp [Stat] --TODO
-          | For Exp Exp Exp [Stat] --TODO (last priority)
+          | While Exp [Stat]
+          | For [Stat] Exp [Stat] [Stat] --TODO (last priority)
           | FunctionCall String [String] --TODO
           deriving (Show, Data)
           
