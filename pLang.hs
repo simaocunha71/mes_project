@@ -54,7 +54,7 @@ pStatements =  f <$> pDecl <*> symbol' ';'  <*> pStatements
             <|> g <$> pIf <*> pStatements 
             <|> h <$> pFuncCall <*> symbol' ';'  <*> pStatements
             <|> i <$> pWhile <*> pStatements
-   --       <|> j <$> pFor <*> pStatements 
+            <|> j <$> pFor <*> pStatements 
             <|> succeed []
               where 
                 f r1 r2 r3  = r1:r3
@@ -130,10 +130,8 @@ pWhile = f <$> token' "while" <*> symbol' '(' <*> pCond <*> symbol' ')' <*> pBlo
       where 
         f r1 r2 r3 r4 r5 = While r3 r5
 
--- TODO
---pFor :: Parser Stat
--- For [Stat] Exp [Stat] [Stat]
+pFor :: Parser Stat
 --               for              (           int x = 0          ;      i < 0              ;      i = i + 1            )      [bloco de cenas]
---pFor = f <$> token' "for" <*> symbol' '(' <*> (zeroOrMore pDecl) <*> symbol' ';' <*> pCond <*> symbol' ';' <*> (zeroOrMore pAssign) <*> symbol' ')' <*> pBloco
---    where 
---      f r1 r2 r3 r4 r5 r6 r7 r8 r9 = For r3 r5 r7 r9
+pFor = f <$> token' "for" <*> symbol' '(' <*> (zeroOrMore pDecl) <*> symbol' ';' <*> pCond <*> symbol' ';' <*> (zeroOrMore pAssign) <*> symbol' ')' <*> pBloco
+    where 
+      f r1 r2 r3 r4 r5 r6 r7 r8 r9 = For r3 r5 r7 r9

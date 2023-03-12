@@ -14,4 +14,6 @@ test_5 = "void f(int x,string y){int x = 2;} void f(int x,string y){int x = 2;} 
 
 test_6 = "void main(int x,string y){int x = 2;string x; x = 3; length();} void f(int x,string y){int x = 2;}"
 
-test_7 = "int calcula(int x){while(i < 7){}}"
+test_7 = "int calcula(int x){while(i < 7){int x;}}"
+
+test_8 = "void f(int x){for(int i = 0; i < 3; i = i + 1){}}"
