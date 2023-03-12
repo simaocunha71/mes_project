@@ -20,8 +20,8 @@ data Exp = Add Exp Exp
          deriving (Show, Data)
 
 -- Data type of statements
-data Stat = Assign String Exp --TODO
-          | Declare Type String Exp
+data Stat = Assign String Exp
+          | Declare Type String
           | DeclAssign Type String Exp --TODO
           | ITE Exp [Stat] [Stat]
           | While Exp [Stat]

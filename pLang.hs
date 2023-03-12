@@ -44,25 +44,25 @@ pParameters = f <$> pParameter
               g r1 r2 r3  = r1:r3
 
 pParameter :: Parser Par
-pParameter = f <$>  token' "int" <*> ident 
-           <|> g <$> token' "string" <*> ident 
+pParameter = f <$>  pType <*> ident 
           where
-            f r1 r2 = Parameter Int r2
-            g r1 r2 = Parameter String r2
+            f r1 r2 = Parameter r1 r2
 
 pStatements :: Parser [Stat] 
 pStatements =  f <$> pDecl <*> symbol' ';'  <*> pStatements
+            <|> f1 <$> pAssign <*> symbol' ';'  <*> pStatements
             <|> g <$> pIf <*> pStatements 
             <|> h <$> pFuncCall <*> symbol' ';'  <*> pStatements
             <|> i <$> pWhile <*> pStatements
-            <|> j <$> pFor <*> pStatements 
+   --       <|> j <$> pFor <*> pStatements 
             <|> succeed []
               where 
-                f r1 r2 r3 = r1:r3
-                g r1 r2    = r1:r2
-                h r1 r2 r3 = r1:r3
-                i r1 r2    = r1:r2
-                j r1 r2    = r1:r2
+                f r1 r2 r3  = r1:r3
+                f1 r1 r2 r3 = r1:r3
+                g r1 r2     = r1:r2
+                h r1 r2 r3  = r1:r3
+                i r1 r2     = r1:r2
+                j r1 r2     = r1:r2
 
 pFuncCall :: Parser Stat 
 pFuncCall = f <$> ident <*> (symbol' '(') <*>  (zeroOrMore ident)  <*> (symbol' ')') 
@@ -77,11 +77,24 @@ pIf = f <$> token' "if" <*> symbol' '(' <*> pCond <*> symbol' ')' <*> pBloco
         g r1 r2 r3 r4 r5 r6 r7 = ITE r3 r5 r7 
 
 pDecl :: Parser Stat
-pDecl = f <$>  token' "int"  <*> ident <*> symbol' '=' <*> pExp
-        <|> g <$>  token' "string"  <*> ident <*> symbol' '=' <*> pExp
+pDecl =  pDeclare
+     <|> pDeclareAssign
+
+pDeclare :: Parser Stat
+pDeclare = f <$>  pType  <*> ident
         where
-          f r1 r2 r3 r4 = Declare Int r2 r4
-          g r1 r2 r3 r4 = Declare String r2 r4
+          f r1 r2 = Declare r1 r2
+
+pDeclareAssign :: Parser Stat
+pDeclareAssign = f <$>  pType  <*> ident <*> symbol' '=' <*> pExp
+            where
+              f r1 r2 r3 r4 = DeclAssign r1 r2 r4
+
+pAssign :: Parser Stat
+pAssign =  f <$> ident <*> symbol' '=' <*> pExp
+       where
+          f r1 r2 r3 = Assign r1 r3
+
 
 pBloco :: Parser [Stat]
 pBloco = f <$> symbol' '{' <*>  pStatements <*> symbol' '}'
