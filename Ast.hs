@@ -22,11 +22,11 @@ data Exp = Add Exp Exp
 -- Data type of statements
 data Stat = Assign String Exp
           | Declare Type String
-          | DeclAssign Type String Exp --TODO
+          | DeclAssign Type String Exp
           | ITE Exp [Stat] [Stat]
           | While Exp [Stat]
-          | For [Stat] Exp [Stat] [Stat] --TODO (last priority)
-          | FunctionCall String [String] --TODO
+          | For [Stat] Exp [Stat] [Stat]
+          | FunctionCall String [Exp] 
           deriving (Show, Data)
           
 -- Data type of type

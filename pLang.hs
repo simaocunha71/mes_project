@@ -65,9 +65,18 @@ pStatements =  f <$> pDecl <*> symbol' ';'  <*> pStatements
                 j r1 r2     = r1:r2
 
 pFuncCall :: Parser Stat 
-pFuncCall = f <$> ident <*> (symbol' '(') <*>  (zeroOrMore ident)  <*> (symbol' ')') 
+pFuncCall = f <$> ident <*> (symbol' '(') <*>  pArgs  <*> (symbol' ')') 
             where 
                 f r1 r2 r3 r4 = FunctionCall r1 r3
+
+pArgs :: Parser [Exp]
+pArgs = f <$> pExp <*> (symbol' ',')  <*> pArgs
+    <|> g <$> pExp 
+    <|> succeed []
+    where
+      f r1 r2 r3 = r1:r3
+      g r1 = [r1]
+
 
 pIf :: Parser Stat
 pIf = f <$> token' "if" <*> symbol' '(' <*> pCond <*> symbol' ')' <*> pBloco

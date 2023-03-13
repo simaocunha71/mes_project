@@ -13,12 +13,10 @@ pStatements: pDecl ';' pStatements
 pBloco: '{'  pStatements  '}' 
 	   | pStatements
 
-
-# Declarações com tipos
 pDecl: int id '=' pExp
 	 | string id '=' pExp
 
-# Atribuições
+
 pAtrib: id '=' pExp
 
 
