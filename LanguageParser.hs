@@ -1,4 +1,4 @@
-module PLang where
+module LanguageParser where
 
 import Prelude hiding ((<*>),(<$>))
 import Parser
@@ -6,15 +6,21 @@ import Ast
 import Exp
 import Tests
 
-langParser input =  fst $ head $ pLang input
 
-pLang = pFuncs 
+parse :: String -> Program
+parse s = fst $ head $ pProgram s
 
-pFuncs :: Parser [Func]
-pFuncs = f <$> spaces <*> pType <*> ident <*> symbol' '(' <*> pParameters <*> symbol' ')' <*> symbol' '{' <*> pStatements <*> symbol' '}' <*> pFuncs
-      <|> succeed []
+--------------------------------------------
+
+pProgram :: Parser Program
+pProgram = f <$> ( zeroOrMore pFunc )
         where 
-          f r0 r1 r2 r3 r4 r5 r6 r7 r8 r9 = (FunctionDeclaration r1 r2 r4 r7):r9
+          f r1 = Prog r1
+
+pFunc :: Parser Func
+pFunc = f <$> spaces <*> pType <*> ident <*> symbol' '(' <*> pParameters <*> symbol' ')' <*> symbol' '{' <*> pStatements <*> symbol' '}'
+        where 
+          f r0 r1 r2 r3 r4 r5 r6 r7 r8 = FunctionDeclaration r1 r2 r4 r7
 
 pIds :: Parser [String]
 pIds =    f <$> ident <*> symbol' ',' <*> pIds

@@ -5,13 +5,15 @@ module StratProg where
 import Ast
 import Data.Data
 import Data.Generics.Zipper
-import PLang
+import LanguageParser
+import LanguageUnparser
 import Tests
 
 
 import Library.StrategicData (StrategicData)
 import Library.Ztrategic
 
+instance StrategicData Program
 instance StrategicData Exp
 instance StrategicData Stat
 instance StrategicData Type
@@ -19,13 +21,14 @@ instance StrategicData Par
 instance StrategicData Func
 instance StrategicData a => StrategicData [a]
 
---Escrever aqui as funçoes de strategic programming
-
 -- Gera a ast para o input dado
-ast = langParser test_6
+ast = parse test_6
+
+opt = applyNeutralOp ast 
+
 
 -- Aplica a otmização do elemento neutro das operações à AST
-applyNeutralOp :: [Func] -> [Func]
+applyNeutralOp :: Program -> Program
 applyNeutralOp code = 
     let codeZipper = toZipper code
         (Just newCode) = applyTP (full_tdTP step ) codeZipper

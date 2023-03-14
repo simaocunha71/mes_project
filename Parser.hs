@@ -116,8 +116,8 @@ oneOrMore p  =    f <$> p
 -- a*
 
 zeroOrMore :: Parser a -> Parser [a]
-zeroOrMore p = succeed []
-            <|> g <$> p <*> zeroOrMore p
+zeroOrMore p = g <$> p <*> zeroOrMore p
+            <|> succeed []
             where g r1 r2 = r1:r2
 
 
