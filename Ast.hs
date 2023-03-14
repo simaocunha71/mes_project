@@ -42,6 +42,7 @@ data Exp = Add Exp Exp
          | Div Exp Exp
          | Const Int
          | Var String
+         | Boolean Bool 
          | EqualsTo Exp Exp
          | Or Exp Exp
          | And Exp Exp

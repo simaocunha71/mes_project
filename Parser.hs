@@ -125,7 +125,8 @@ spaces = zeroOrMore (satisfy isSpace)
 
 ident = (\a _ -> a) <$> oneOrMore (satisfy isAlpha) <*> spaces
 number = (\a _ -> a) <$> oneOrMore (satisfy isDigit) <*> spaces
-
+pTrue =  (\a _ -> a) <$> (token' "True")  <*> spaces
+pFalse = (\a _ -> a) <$> (token' "False") <*> spaces
 
 --
 -- Nao funciona com producoes recursivas a esquerda!

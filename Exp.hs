@@ -68,11 +68,15 @@ pExp9 = id <$> pFactor
 
 pFactor :: Parser Exp
 pFactor =  f   <$> number
-       <|> g   <$> ident
+       <|> j1  <$> pTrue
+       <|> j2  <$> pFalse
+       <|> g   <$> ident 
        <|> h   <$> enclosedBy (symbol' '(')
                               pExp
                               (symbol' ')')
        where 
             f r1 = Const (read r1)
+            j1 _ =  Boolean True
+            j2 _ =  Boolean False
             g r1 = Var r1
             h r1  = r1 
