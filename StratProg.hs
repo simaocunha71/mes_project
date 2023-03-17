@@ -23,8 +23,8 @@ instance StrategicData a => StrategicData [a]
 
 
 -- Aplica a otmização do elemento neutro das operações à AST
-applyOptimizacoes :: Program -> Program
-applyOptimizacoes code = 
+applyOptimizations :: Program -> Program
+applyOptimizations code = 
     let codeZipper = toZipper code
         (Just newCode) = applyTP (innermost step ) codeZipper
             where step = failTP `adhocTP` expNeutralOp `adhocTP` loopImprove
