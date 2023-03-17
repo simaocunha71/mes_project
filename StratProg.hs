@@ -21,9 +21,6 @@ instance StrategicData Par
 instance StrategicData Func
 instance StrategicData a => StrategicData [a]
 
-parseWithStrats :: String -> Program
-parseWithStrats s = (applyLoopImprove (applyNeutralOp (parse s)))
-
 
 -- Aplica a otmização do elemento neutro das operações à AST
 applyNeutralOp :: Program -> Program

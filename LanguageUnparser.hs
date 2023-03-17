@@ -4,11 +4,6 @@ module LanguageUnparser where
 import Ast
 
 
-unparse :: Program -> String
-unparse p = showProgram p
-
---------------------------------
-
 showProgram :: Program -> String
 showProgram (Prog p) = showFuncs p
 
@@ -41,9 +36,14 @@ showStat (Declare t var) = (showType t) ++ " " ++ var ++ ";"
 showStat (DeclAssign t var exp) = (showType t) ++ " " ++ var ++ " = " ++ (showExp exp) ++ ";"
 showStat (ITE exp stat1 stat2) = "if(" ++ (showExp exp) ++ "){" ++ (showStats stat1) ++ "}else{" ++  (showStats stat2) ++ "}"
 showStat (While exp stat) = "while(" ++ (showExp exp) ++ "){" ++ (showStats stat) ++ "}"
-showStat (FunctionCall name args) = name ++ "(" ++ (showExps args) ++ ");"
+showStat (FunctionCall name args) = name ++ "(" ++ (showArgs args) ++ ");"
 showStat (Sequence [e]) = showStat e ++ ";"
 showStat (Sequence (h:t)) = showStat h ++ ";" ++ showStat (Sequence t)
+
+showArgs :: [Exp] -> String
+showArgs [h] = (showExp h)
+showArgs [] = ""
+showArgs (h:t) = (showExp h) ++ "," ++ (showArgs t)
 
 showType :: Type -> String
 showType Int = "int"
