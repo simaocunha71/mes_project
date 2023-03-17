@@ -14,7 +14,7 @@ unparse :: Program -> String
 unparse p = showProgram p
 
 parseWithOpt :: String -> Program
-parseWithOpt s = (applyLoopImprove (applyNeutralOp (parse s)))
+parseWithOpt s = (applyOptimizacoes(parse s))
 
 applyOpts:: Program -> Program
-applyOpts p = (applyLoopImprove (applyNeutralOp p))
+applyOpts p = (applyOptimizacoes p)

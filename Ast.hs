@@ -50,6 +50,7 @@ data Exp = Add Exp Exp
          | LessThen Exp Exp
          | MoreThen Exp Exp
          deriving (Show, Data)
+         
 
 
 

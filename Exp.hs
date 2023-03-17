@@ -8,12 +8,30 @@ import Ast
 e :: Exp
 e = Add (Const 3) (Mul (Const 4) (Const 2))
 
+-- 
+-- () [] -> . ++ --                    left to right   [1]
+--       ! ~ ++ -- + - (type) * & sizeof     right to left   [2]
+--       * / %                               left to right
+--       + -                                 left to right
+--       << >>                               left to right
+--       < <= > >=                           left to right
+--       == !=                               left to right
+--       &                                   left to right
+--       ^                                   left to right
+--       |                                   left to right
+--       &&                                  left to right
+--       ||                                  left to right
+--       ?:                                  right to left
+--       = += -= *= /= %= <<= >>= &= ^= |=   right to left
+--       ,                                   left to right
+
 -- Gramática //TODO adicionar aqui os precedence levels, há erros no enclosedBy
 -- Exp   -> Exp1 spaces Exp
 -- Exp1  -> Exp2 '$' Exp
 --        | Exp2 '$!' Exp
 --        | Exp2 '‘seq‘' Exp
 --        | Exp2
+
 
 pExp :: Parser Exp
 pExp = f <$> spaces <*> pExp1
