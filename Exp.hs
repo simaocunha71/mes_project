@@ -8,14 +8,12 @@ import Ast
 e :: Exp
 e = Add (Const 3) (Mul (Const 4) (Const 2))
 
--- Gramática //TODO adicionar aqui os precedence levels, o pFactor nao apanha numeros com digitos > 1, pode haver erros no enclosedBy
--- Exp    -> Termo '+' Exp
---        |  Termo
--- Termo  -> Factor '*' Termo
---        |  Factor
--- Factor -> int
---        |  var
---        |  '('  Exp ')'
+-- Gramática //TODO adicionar aqui os precedence levels, há erros no enclosedBy
+-- Exp   -> Exp1 spaces Exp
+-- Exp1  -> Exp2 '$' Exp
+--        | Exp2 '$!' Exp
+--        | Exp2 '‘seq‘' Exp
+--        | Exp2
 
 pExp :: Parser Exp
 pExp = f <$> spaces <*> pExp1
@@ -71,12 +69,10 @@ pFactor =  f   <$> number
        <|> j1  <$> pTrue
        <|> j2  <$> pFalse
        <|> g   <$> ident 
-       <|> h   <$> enclosedBy (symbol' '(')
-                              pExp
-                              (symbol' ')')
+       <|> h   <$> (symbol' '(') <*> pExp2 <*> (symbol' ')')
        where 
             f r1 = Const (read r1)
             j1 _ =  Boolean True
             j2 _ =  Boolean False
             g r1 = Var r1
-            h r1  = r1 
+            h r1 r2 r3 = r2

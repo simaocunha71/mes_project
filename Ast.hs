@@ -26,6 +26,7 @@ data Stat = Assign String Exp
           | While Exp [Stat]
           | For [Stat] Exp [Stat] [Stat]
           | FunctionCall String [Exp] 
+          | Sequence [Stat]
           deriving (Show, Data)
 
 -- Data type of type
@@ -48,7 +49,6 @@ data Exp = Add Exp Exp
          | And Exp Exp
          | LessThen Exp Exp
          | MoreThen Exp Exp
-         | Exp Exp
          deriving (Show, Data)
 
 

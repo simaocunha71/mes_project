@@ -54,10 +54,24 @@ applyLoopImprove code =
 
 -- Aumenta a percepção dos loops
 loopImprove :: Stat -> Maybe Stat
-loopImprove (While (Exp (Const 0)) st) = Just (While (Exp (Boolean False)) st)
-loopImprove (While (Exp (Const _)) st) = Just (While (Exp (Boolean True)) st)
-loopImprove (For r1 (Exp (Const 0)) r3 r4) = Just (For r1 (Exp (Boolean False)) r3 r4)
-loopImprove (For r1 (Exp (Const _)) r3 r4) = Just (For r1 (Exp (Boolean True)) r3 r4)
+loopImprove (While (Const 0) st) = Just (While (Boolean False) st)
+loopImprove (While (Const _) st) = Just (While (Boolean True) st)
+loopImprove (For r1 (Const 0) r3 r4) = Just (For r1 (Boolean False) r3 r4)
+loopImprove (For r1 (Const _) r3 r4) = Just (For r1 (Boolean True) r3 r4)
 loopImprove (For [] r2 [] r4) = Just (While r2 r4)
 loopImprove _ = Nothing
 
+
+-- Aplica a otmização for to while
+applyForToWhile :: Program -> Program
+applyForToWhile code = 
+    let codeZipper = toZipper code
+        (Just newCode) = applyTP (innermost step ) codeZipper
+            where step = failTP  `adhocTP` forToWhile
+        in 
+        fromZipper newCode
+
+-- Transforma for to while
+forToWhile :: Stat -> Maybe Stat
+forToWhile (For r1 r2 r3 r4) = Just (Sequence (r1 ++ [(While r2 (r3 ++ r4))]))
+forToWhile _ = Nothing

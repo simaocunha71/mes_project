@@ -137,7 +137,7 @@ pNestedCond =  a <$> pExp
                 <|> b <$> enclosedBy (symbol' '(')
                                       pCond
                                      (symbol' ')')
-                where a x = Exp x
+                where a x = x
                       b x = x
 
 pWhile :: Parser Stat

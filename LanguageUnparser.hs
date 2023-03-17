@@ -42,6 +42,8 @@ showStat (DeclAssign t var exp) = (showType t) ++ " " ++ var ++ " = " ++ (showEx
 showStat (ITE exp stat1 stat2) = "if(" ++ (showExp exp) ++ "){" ++ (showStats stat1) ++ "}else{" ++  (showStats stat2) ++ "}"
 showStat (While exp stat) = "while(" ++ (showExp exp) ++ "){" ++ (showStats stat) ++ "}"
 showStat (FunctionCall name args) = name ++ "(" ++ (showExps args) ++ ");"
+showStat (Sequence [e]) = showStat e ++ ";"
+showStat (Sequence (h:t)) = showStat h ++ ";" ++ showStat (Sequence t)
 
 showType :: Type -> String
 showType Int = "int"
