@@ -6,6 +6,62 @@ import Ast
 import Exp
 import Tests
 
+-- Gramática
+{-
+
+Program  -> zeroOrMore Func
+
+Func -> spaces Type '(' Parameters ')' '{' Statements '}'
+
+Parameters -> Parameter ',' Parameters
+           | empty
+
+Parameter -> Type
+
+Type -> int
+     |  char
+     |  string
+     |  void
+
+Statements -> Decl ';' Statements
+           |  Assign ';' Statements
+           |  If Statements
+           |  FuncCall ';' Statements
+           |  While Statements
+           |  For Statements
+           |  empty
+
+Decl -> Declare
+     |  DeclareAssign
+
+Declare -> Type
+
+DeclareAssign -> Type '=' Exp
+
+Assign -> '=' Exp
+
+If -> "if" '(' Cond ')' Bloco
+   |  "if" '(' Cond ')' Bloco "else" Bloco
+
+FuncCall -> '(' Args ')'
+
+While -> "while" '(' Cond ')' Bloco
+
+Cond -> NestedCond "==" Cond
+     |  NestedCond "||" Cond
+     |  NestedCond "&&" Cond
+     |  NestedCond "<"  Cond
+     |  NestedCond ">"  Cond
+     |  NestedCond
+
+NestedCond -> Exp
+           |  '(' Cond ')'
+
+For -> "for" '(' (zeroOrMore Decl) ';' Cond ';' (zeroOrMore Assign) ')' Bloco
+
+Bloco -> '{' Statements '}'
+
+-}
 
 pProgram :: Parser Program
 pProgram = f <$> ( zeroOrMore pFunc )
