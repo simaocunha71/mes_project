@@ -1,4 +1,3 @@
-# mes_project
 ### Trabalho prático da UC de Manutenção e Evolução de Software - 2022/2023
 
 #### Grupo 10
