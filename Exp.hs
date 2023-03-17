@@ -25,12 +25,36 @@ e = Add (Const 3) (Mul (Const 4) (Const 2))
 --       = += -= *= /= %= <<= >>= &= ^= |=   right to left
 --       ,                                   left to right
 
--- Gramática //TODO adicionar aqui os precedence levels, há erros no enclosedBy
--- Exp   -> Exp1 spaces Exp
--- Exp1  -> Exp2 '$' Exp
---        | Exp2 '$!' Exp
---        | Exp2 '‘seq‘' Exp
---        | Exp2
+{-
+
+Exp  -> spaces Exp1
+
+Exp1 -> Exp2 "||" Exp1
+     |  Exp1
+
+Exp2 -> Exp3 "&&" Exp2
+     |  Exp2
+
+Exp3 -> Exp4 "==" Exp3
+     |  Exp4 '<'  Exp3
+     |  Exp4 '>'  Exp3
+     |  Exp3
+
+Exp4 -> Exp5 '+' Exp4
+     |  Exp5 '-' Exp4
+     |  Exp5
+
+Exp5 -> Exp6 '*' Exp5
+     |  Exp6 '/' Exp5
+     |  Exp6
+
+Exp6 -> int
+     |  var
+     |  true
+     |  false
+     |  '('  Exp ')'
+
+-}
 
 
 pExp :: Parser Exp
