@@ -7,11 +7,6 @@ import Exp
 import Tests
 
 
-parse :: String -> Program
-parse s = fst $ head $ pProgram s
-
---------------------------------------------
-
 pProgram :: Parser Program
 pProgram = f <$> ( zeroOrMore pFunc )
         where 
