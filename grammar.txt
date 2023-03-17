@@ -1,58 +1,80 @@
+Program  -> zeroOrMore Func
 
-pLinguagem: pFuncs
+Func -> spaces Type '(' Parameters ')' '{' Statements '}'
 
-pFuncs: id '(' pIds ')' '{' pStatements '}'
+Parameters -> Parameter ',' Parameters
+           | empty
 
-pStatements: pDecl ';' pStatements
-		   | pFor pStatements
-		   | pWhile pStatements
-		   | pIf pStatements
-		   | empty     
+Parameter -> Type
 
+Type -> int
+     |  char
+     |  string
+     |  void
 
-pBloco: '{'  pStatements  '}' 
-	   | pStatements
+Statements -> Decl ';' Statements
+           |  Assign ';' Statements
+           |  If Statements
+           |  FuncCall ';' Statements
+           |  While Statements
+           |  For Statements
+           |  empty
 
-pDecl: int id '=' pExp
-	 | string id '=' pExp
+Decl -> Declare
+     |  DeclareAssign
 
+Declare -> Type
 
-pAtrib: id '=' pExp
+DeclareAssign -> Type '=' Exp
 
+Assign -> '=' Exp
 
-# Para já sem else if'sem
-pIf: if '(' pCond ')' pBloco  else pBloco 
-   | if '(' pCond ')' pBloco 
+If -> "if" '(' Cond ')' Bloco
+   |  "if" '(' Cond ')' Bloco "else" Bloco
 
-pFor: for '('  pForin  ')'  pBloco
+FuncCall -> '(' Args ')'
 
+While -> "while" '(' Cond ')' Bloco
 
-pForin: pDecl ';' pCond ';' pAtrib
-	  | pAtrib ';' pCond ';' pAtrib
-	  | ';' pCond ';' pAtrib
+Cond -> NestedCond "==" Cond
+     |  NestedCond "||" Cond
+     |  NestedCond "&&" Cond
+     |  NestedCond "<"  Cond
+     |  NestedCond ">"  Cond
+     |  NestedCond
 
+NestedCond -> Exp
+           |  '(' Cond ')'
 
+For -> "for" '(' (zeroOrMore Decl) ';' Cond ';' (zeroOrMore Assign) ')' Bloco
 
-pExp: Termo '+' pExp
-  	| Termo '-' pExp
-    | Termo
+Bloco -> '{' Statements '}'
 
-Termo: Fator '*' Termo
-      | Fator '/' Termo
-      | Fator
+Exp  -> spaces Exp1
 
-Fator: int
-     | var
-     | '(' pExp ')'
+Exp1 -> Exp2 "||" Exp1
+     |  Exp2
 
+Exp2 -> Exp3 "&&" Exp2
+     |  Exp3
 
-pCond: pNestedcond '==' pCond
-	 | pNestedcond '&&' pCond
-	 | pNestedcond '<' pCond
-	 | pNestedcond '>' pCond
-	 | pExp 
+Exp3 -> Exp4 "==" Exp3
+     |  Exp4
 
-pNestedcond: pExp
-		 | '(' pNestedcond ')'
+Exp4 -> Exp5 '<' Exp4
+     |  Exp5 '>' Exp4
+     |  Exp5
 
+Exp5 -> Exp6 '+' Exp5
+     |  Exp6 '-' Exp5
+     |  Exp6
 
+Exp5 -> Exp6 '*' Exp5
+     |  Exp6 '/' Exp5
+     |  Exp6
+
+pFactor -> int
+         |  true
+         |  false
+         |  var
+         |  '('  Exp ')'
