@@ -1,4 +1,3 @@
-# mes_project
 ### Trabalho prático da UC de Manutenção e Evolução de Software - 2022/2023
 
 #### Grupo 10
@@ -44,3 +43,5 @@ Este modulo disponibiliza as seguintes funções:
 ### Testes
 
 No módulo ```Tests.hs``` tem alguns input exemplos com frases válidas da linguagem. Os inputs de teste podem ser chamados no módulo principal.
+
+Exemplo: ```parse test_10```
