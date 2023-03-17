@@ -8,51 +8,52 @@ import Ast
 e :: Exp
 e = Add (Const 3) (Mul (Const 4) (Const 2))
 
--- 
--- () [] -> . ++ --                    left to right   [1]
---       ! ~ ++ -- + - (type) * & sizeof     right to left   [2]
---       * / %                               left to right
---       + -                                 left to right
---       << >>                               left to right
---       < <= > >=                           left to right
---       == !=                               left to right
---       &                                   left to right
---       ^                                   left to right
---       |                                   left to right
---       &&                                  left to right
---       ||                                  left to right
---       ?:                                  right to left
---       = += -= *= /= %= <<= >>= &= ^= |=   right to left
---       ,                                   left to right
-
 {-
-
+     Precedence levels
+ () [] -> . ++ --                    left to right   [1]
+       ! ~ ++ -- + - (type) * & sizeof     right to left   [2]
+       * / %                               left to right
+       + -                                 left to right
+       << >>                               left to right
+       < <= > >=                           left to right
+       == !=                               left to right
+       &                                   left to right
+       ^                                   left to right
+       |                                   left to right
+       &&                                  left to right
+       ||                                  left to right
+       ?:                                  right to left
+       = += -= *= /= %= <<= >>= &= ^= |=   right to left
+       ,                                   left to right
+(pode expandir mais)
 Exp  -> spaces Exp1
 
 Exp1 -> Exp2 "||" Exp1
-     |  Exp1
-
-Exp2 -> Exp3 "&&" Exp2
      |  Exp2
 
-Exp3 -> Exp4 "==" Exp3
-     |  Exp4 '<'  Exp3
-     |  Exp4 '>'  Exp3
+Exp2 -> Exp3 "&&" Exp2
      |  Exp3
 
-Exp4 -> Exp5 '+' Exp4
-     |  Exp5 '-' Exp4
+Exp3 -> Exp4 "==" Exp3
+     |  Exp4
+
+Exp4 -> Exp5 '<' Exp4
+     |  Exp5 '>' Exp4
      |  Exp5
+
+Exp5 -> Exp6 '+' Exp5
+     |  Exp6 '-' Exp5
+     |  Exp6
 
 Exp5 -> Exp6 '*' Exp5
      |  Exp6 '/' Exp5
      |  Exp6
 
-Exp6 -> int
-     |  var
-     |  true
-     |  false
-     |  '('  Exp ')'
+pFactor -> int
+         |  true
+         |  false
+         |  var
+         |  '('  Exp ')'
 
 -}
 
@@ -62,49 +63,40 @@ pExp = f <$> spaces <*> pExp1
      where f a b = b
 
 pExp1 :: Parser Exp
-pExp1 = id <$> pExp2
-
-pExp2 :: Parser Exp
-pExp2 =  f <$> pExp3 <*> token' "||" <*> pExp2
-     <|> id <$> pExp3
+pExp1 =  f <$> pExp2 <*> token' "||" <*> pExp1
+     <|> id <$> pExp2
         where f a _ c = Or a c
         
-pExp3 :: Parser Exp
-pExp3 = f <$> pExp4 <*> token' "&&" <*> pExp3
-     <|>  id <$> pExp4
+pExp2 :: Parser Exp
+pExp2 = f <$> pExp3 <*> token' "&&" <*> pExp2
+     <|>  id <$> pExp3
         where f a _ c = And a c
 
-pExp4 :: Parser Exp
-pExp4 =  f <$> pExp5 <*> token' "==" <*> pExp4
-     <|> g <$> pExp5 <*> symbol' '<' <*> pExp4
-     <|> h <$> pExp5 <*> symbol' '>' <*> pExp4
-     <|> id <$> pExp5
+pExp3 :: Parser Exp
+pExp3 =  f <$> pExp4 <*> token' "==" <*> pExp3
+     <|> id <$> pExp4
         where f a _ c = EqualsTo a c
-              g a _ c = LessThen a c
-              h a _ c = MoreThen a c
+
+pExp4 :: Parser Exp
+pExp4 =  f <$> pExp5 <*> symbol' '<' <*> pExp4
+     <|> g <$> pExp5 <*> symbol' '>' <*> pExp4
+     <|> id <$> pExp5
+     where f a _ c = LessThen a c
+           g a _ c = MoreThen a c
 
 pExp5 :: Parser Exp
-pExp5 = id <$> pExp6
-
-pExp6 :: Parser Exp
-pExp6 =  f <$> pExp7 <*> symbol' '+' <*> pExp6
-     <|> g <$> pExp7 <*> symbol' '-' <*> pExp6
-     <|> id <$> pExp7
+pExp5 =  f <$> pExp6 <*> symbol' '+' <*> pExp5
+     <|> g <$> pExp6 <*> symbol' '-' <*> pExp5
+     <|> id <$> pExp6
         where f a _ c = Add a c
               g a _ c = Sub a c
 
-pExp7 :: Parser Exp
-pExp7 =  f <$> pExp8 <*> symbol' '*' <*> pExp7
-     <|> g <$> pExp8 <*> symbol' '/' <*> pExp7
-     <|> id <$> pExp8
+pExp6 :: Parser Exp
+pExp6 =  f <$> pFactor <*> symbol' '*' <*> pExp6
+     <|> g <$> pFactor <*> symbol' '/' <*> pExp6
+     <|> id <$> pFactor
         where f a _ c = Mul a c
               g a _ c = Div a c
-
-pExp8 :: Parser Exp
-pExp8 = id <$> pExp9
-
-pExp9 :: Parser Exp
-pExp9 = id <$> pFactor
 
 pFactor :: Parser Exp
 pFactor =  f   <$> number
