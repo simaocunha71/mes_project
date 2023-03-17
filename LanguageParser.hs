@@ -161,6 +161,22 @@ pAssign =  f <$> ident <*> symbol' '=' <*> pExp
        where
           f r1 r2 r3 = Assign r1 r3
 
+pForDeclVars :: Parser [Stat]
+pForDeclVars = f <$> pDecl
+              <|> g <$> pDecl <*> symbol' ',' <*> pForDeclVars
+              <|> succeed []
+            where 
+              f r1 = [r1] 
+              g r1 r2 r3 = r1:r3
+
+pForAssigns :: Parser [Stat]
+pForAssigns = f <$> pAssign
+              <|> g <$> pAssign <*> symbol' ',' <*> pForAssigns
+              <|> succeed []
+            where 
+              f r1 = [r1] 
+              g r1 r2 r3 = r1:r3
+              
 
 pBloco :: Parser [Stat]
 pBloco = f <$> symbol' '{' <*>  pStatements <*> symbol' '}'
@@ -198,6 +214,6 @@ pWhile = f <$> token' "while" <*> symbol' '(' <*> pCond <*> symbol' ')' <*> pBlo
 
 pFor :: Parser Stat
 --               for              (           int x = 0          ;      i < 0              ;      i = i + 1            )      [bloco de cenas]
-pFor = f <$> token' "for" <*> symbol' '(' <*> (zeroOrMore pDecl) <*> symbol' ';' <*> pCond <*> symbol' ';' <*> (zeroOrMore pAssign) <*> symbol' ')' <*> pBloco
+pFor = f <$> token' "for" <*> symbol' '(' <*> pForDeclVars <*> symbol' ';' <*> pCond <*> symbol' ';' <*> pForAssigns <*> symbol' ')' <*> pBloco
     where 
       f r1 r2 r3 r4 r5 r6 r7 r8 r9 = For r3 r5 r7 r9

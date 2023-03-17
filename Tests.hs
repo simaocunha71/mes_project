@@ -9,13 +9,14 @@ test_3 = "void f(int x){int x = 2;}"
 
 test_4 = "void f(int x,string y){int x = 2;}"
 
---ver como por este case test a dar
 test_5 = " void f(int x,string y){int x = 2;}    void f(int x,string y){int x = 2;} "
 
 test_6 = "void main(int x,string y){int x = 2*1;string x; x = 3*1; length(x,2+2);} void f(int x,string y){int x = 2 + 0 + 0;}"
 
 test_7 = "int calcula(int x){while(i < 7){int x;}}"
 
-test_8 = "void f(int x){for(int i = 0; i < 3; i = i + 1){}}"
+test_8 = "void f(int x){for(int i = 0,int x =10; i < 3; i = i + 1, x = x +1){}}"
 
 test_9 = "int calcula(int x){while(0){int x;} for(;2;){int x;}}"
+
+test_10 = "void function (int x, char c){int i;for(int i = 0; i < 10; i=i+1){if(i + x < 3){while(i < 7){i=i-1;}}else{for(;i < 3;){x = 4 + i;}}}c = 0;}"
