@@ -44,3 +44,5 @@ Este modulo disponibiliza as seguintes funções:
 ### Testes
 
 No módulo ```Tests.hs``` tem alguns input exemplos com frases válidas da linguagem. Os inputs de teste podem ser chamados no módulo principal.
+
+Exemplo: ```parse test_10```
