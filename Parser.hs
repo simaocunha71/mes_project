@@ -123,6 +123,15 @@ zeroOrMore p = g <$> p <*> zeroOrMore p
 
 spaces = zeroOrMore (satisfy isSpace)
 
+
+isNewline :: Char -> Bool
+isNewline '\n' = True
+isNewline _ = False
+
+newlines = zeroOrMore (satisfy isNewline )
+
+
+
 ident = (\a _ -> a) <$> oneOrMore (satisfy isAlpha) <*> spaces
 number = (\a _ -> a) <$> oneOrMore (satisfy isDigit) <*> spaces
 pTrue =  (\a _ -> a) <$> (token' "True")  <*> spaces

@@ -1,10 +1,13 @@
 module Runner where
 
+import System.IO  
+import Control.Monad
 import LanguageParser
 import LanguageUnparser
 import StratProg
 import Ast
 import Tests
+
 
 
 parse :: String -> Program
@@ -18,3 +21,8 @@ parseWithOpt s = (applyOptimizations(parse s))
 
 applyOpts:: Program -> Program
 applyOpts p = (applyOptimizations p)
+
+bugCount :: String -> Int
+bugCount s = length $ bugTrack  $ parse s
+
+

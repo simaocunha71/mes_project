@@ -27,6 +27,7 @@ data Stat = Assign String Exp
           | For [Stat] Exp [Stat] [Stat]
           | FunctionCall String [Exp] 
           | Sequence [Stat]
+          | Return Exp
           deriving (Show, Data)
 
 -- Data type of type

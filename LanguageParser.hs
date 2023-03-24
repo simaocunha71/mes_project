@@ -69,9 +69,9 @@ pProgram = f <$> ( zeroOrMore pFunc )
           f r1 = Prog r1
 
 pFunc :: Parser Func
-pFunc = f <$> spaces <*> pType <*> ident <*> symbol' '(' <*> pParameters <*> symbol' ')' <*> symbol' '{' <*> pStatements <*> symbol' '}'
+pFunc = f <$> spaces <*> pType <*> ident <*> symbol' '(' <*> pParameters <*> symbol' ')' <*> symbol' '{' <*> newlines <*> pStatements <*> symbol' '}'
         where 
-          f r0 r1 r2 r3 r4 r5 r6 r7 r8 = FunctionDeclaration r1 r2 r4 r7
+          f r0 r1 r2 r3 r4 r5 r6 r7 r8 r9 = FunctionDeclaration r1 r2 r4 r8
 
 pIds :: Parser [String]
 pIds =    f <$> ident <*> symbol' ',' <*> pIds
@@ -106,20 +106,22 @@ pParameter = f <$>  pType <*> ident
             f r1 r2 = Parameter r1 r2
 
 pStatements :: Parser [Stat] 
-pStatements =  f <$> pDecl <*> symbol' ';'  <*> pStatements
-            <|> f1 <$> pAssign <*> symbol' ';'  <*> pStatements
-            <|> g <$> pIf <*> pStatements 
-            <|> h <$> pFuncCall <*> symbol' ';'  <*> pStatements
-            <|> i <$> pWhile <*> pStatements
-            <|> j <$> pFor <*> pStatements 
+pStatements =  f <$> pDecl <*> symbol' ';' <*> newlines <*> pStatements
+            <|> f1 <$> pAssign <*> symbol' ';'  <*> newlines  <*> pStatements
+            <|> g <$> pIf  <*> newlines <*>  pStatements 
+            <|> h <$> pFuncCall <*> symbol' ';' <*> newlines  <*> pStatements
+            <|> i <$> pWhile  <*> newlines <*> pStatements
+            <|> j <$> pFor  <*> newlines <*> pStatements 
+            <|> k <$> pReturn 
             <|> succeed []
               where 
-                f r1 r2 r3  = r1:r3
-                f1 r1 r2 r3 = r1:r3
-                g r1 r2     = r1:r2
-                h r1 r2 r3  = r1:r3
-                i r1 r2     = r1:r2
-                j r1 r2     = r1:r2
+                f r1 r2 r3 r4  = r1:r4
+                f1 r1 r2 r3 r4 = r1:r4
+                g r1 r2 r3     = r1:r3
+                h r1 r2 r3 r4  = r1:r4
+                i r1 r2 r3    = r1:r3
+                j r1 r2 r3    = r1:r3
+                k r1 = [r1]
 
 pFuncCall :: Parser Stat 
 pFuncCall = f <$> ident <*> (symbol' '(') <*>  pArgs  <*> (symbol' ')') 
@@ -182,6 +184,11 @@ pBloco :: Parser [Stat]
 pBloco = f <$> symbol' '{' <*>  pStatements <*> symbol' '}'
         where 
             f r1 r2 r3 = r2
+
+pReturn :: Parser Stat
+pReturn = f <$> token' "return" <*> pExp <*> symbol' ';'
+        where
+          f r1 r2 r3 = Return r2
 
 
 

@@ -48,3 +48,43 @@ loopImprove (For r1 (Const _) r3 r4) = Just (For r1 (Boolean True) r3 r4)
 loopImprove (For [] r2 [] r4) = Just (While r2 r4)
 loopImprove (For r1 r2 r3 r4) = Just (Sequence (r1 ++ [(While r2 (r3 ++ r4))]))
 loopImprove _ = Nothing
+
+
+-- -- Identifica e faz refctoring de smells
+-- smellRefactor :: Program -> Program
+-- smellRefactor code = 
+--     let codeZipper = toZipper code
+--         (Just newCode) = applyTU (full_tdTU  step ) codeZipper
+--             where step = failTU `adhocTU` 
+--         in 
+--         newCode
+
+-- -- Corrige if ( f1() ) { return True } else {return False} ⇒ return f1()
+-- booleanLiterals :: Exp -> Maybe Exp
+-- booleanLiterals 
+
+-- Agrega bugs numa lista
+bugTrack :: Program -> [Int]
+bugTrack code = 
+    let codeZipper = toZipper code
+        (Just newCode) = applyTU (full_tdTU  step ) codeZipper
+            where step = failTU `adhocTU` subZero
+        in 
+        newCode
+
+subZero:: Exp -> Maybe [Int]
+subZero (Div e (Const 0)) = Just [1]
+subZero _ = Nothing
+
+-- -- Agrega smells numa lista
+-- smellTrack :: Program -> [Int]
+-- bugTrack code = 
+--     let codeZipper = toZipper code
+--         (Just newCode) = applyTU (full_tdTU  step ) codeZipper
+--             where step = failTU `adhocTU` 
+--         in 
+--         newCode
+
+
+
+
