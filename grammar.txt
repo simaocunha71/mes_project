@@ -41,6 +41,8 @@ Cond -> NestedCond "==" Cond
      |  NestedCond "&&" Cond
      |  NestedCond "<"  Cond
      |  NestedCond ">"  Cond
+     |  NestedCond "<="  Cond
+     |  NestedCond ">="  Cond
      |  NestedCond
 
 NestedCond -> Exp
@@ -63,6 +65,8 @@ Exp3 -> Exp4 "==" Exp3
 
 Exp4 -> Exp5 '<' Exp4
      |  Exp5 '>' Exp4
+     |  Exp5 "<=" Exp4
+     |  Exp5 ">=" Exp4
      |  Exp5
 
 Exp5 -> Exp6 '+' Exp5

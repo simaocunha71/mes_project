@@ -50,6 +50,8 @@ data Exp = Add Exp Exp
          | And Exp Exp
          | LessThen Exp Exp
          | MoreThen Exp Exp
+         | LessEqualThen Exp Exp
+         | MoreEqualThen Exp Exp
          | ExpFunctionCall String [Exp] 
          deriving (Show, Data)
 

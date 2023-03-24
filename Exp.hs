@@ -39,6 +39,8 @@ Exp3 -> Exp4 "==" Exp3
 
 Exp4 -> Exp5 '<' Exp4
      |  Exp5 '>' Exp4
+     |  Exp5 "<=" Exp4
+     |  Exp5 ">=" Exp4
      |  Exp5
 
 Exp5 -> Exp6 '+' Exp5
@@ -80,9 +82,13 @@ pExp3 =  f <$> pExp4 <*> token' "==" <*> pExp3
 pExp4 :: Parser Exp
 pExp4 =  f <$> pExp5 <*> symbol' '<' <*> pExp4
      <|> g <$> pExp5 <*> symbol' '>' <*> pExp4
+     <|> h <$> pExp5 <*> token' "<=" <*> pExp4
+     <|> i <$> pExp5 <*> token' ">=" <*> pExp4
      <|> id <$> pExp5
      where f a _ c = LessThen a c
            g a _ c = MoreThen a c
+           h a _ c = LessEqualThen a c
+           i a _ c = MoreEqualThen a c
 
 pExp5 :: Parser Exp
 pExp5 =  f <$> pExp6 <*> symbol' '+' <*> pExp5

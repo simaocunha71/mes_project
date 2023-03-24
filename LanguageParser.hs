@@ -52,6 +52,8 @@ Cond -> NestedCond "==" Cond
      |  NestedCond "&&" Cond
      |  NestedCond "<"  Cond
      |  NestedCond ">"  Cond
+     |  NestedCond "<="  Cond
+     |  NestedCond ">="  Cond
      |  NestedCond
 
 NestedCond -> Exp
