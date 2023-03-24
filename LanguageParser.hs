@@ -54,6 +54,7 @@ Cond -> NestedCond "==" Cond
      |  NestedCond ">"  Cond
      |  NestedCond "<="  Cond
      |  NestedCond ">="  Cond
+     |  "!" Cond
      |  NestedCond
 
 NestedCond -> Exp
@@ -200,19 +201,21 @@ pReturn = f <$> token' "return" <*> pExp <*> symbol' ';'
 
 pCond :: Parser Exp
 pCond =  a0 <$> pExpFuncCall <*> symbol' ';'
-          <|> a  <$> pNestedCond <*> token' "==" <*> pCond
-          <|> b  <$> pNestedCond <*> token' "||" <*> pCond
-          <|> c  <$> pNestedCond <*> token' "&&" <*> pCond
-          <|> d  <$> pNestedCond <*> token' "<" <*> pCond
-          <|> e  <$> pNestedCond <*> token' ">" <*> pCond
-          <|> f  <$> pNestedCond
+     <|> a  <$> pNestedCond  <*> token' "==" <*> pCond
+     <|> b  <$> pNestedCond  <*> token' "||" <*> pCond
+     <|> c  <$> pNestedCond  <*> token' "&&" <*> pCond
+     <|> d  <$> pNestedCond  <*> token' "<"  <*> pCond
+     <|> e  <$> pNestedCond  <*> token' ">"  <*> pCond
+     <|> f  <$> token' "!"   <*> pCond
+     <|> g  <$> pNestedCond
         where a0 r1 r2 = r1
               a x _ z = EqualsTo x z
               b x _ z = Or x z
               c x _ z = And x z
               d x _ z = LessThen x z
               e x _ z = MoreThen x z
-              f x = x
+              f x y   = Not y 
+              g x = x
  
 pNestedCond :: Parser Exp
 pNestedCond =  a <$> pExp

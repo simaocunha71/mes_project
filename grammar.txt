@@ -43,6 +43,7 @@ Cond -> NestedCond "==" Cond
      |  NestedCond ">"  Cond
      |  NestedCond "<="  Cond
      |  NestedCond ">="  Cond
+     |  "!" Cond
      |  NestedCond
 
 NestedCond -> Exp

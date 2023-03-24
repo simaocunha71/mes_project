@@ -42,6 +42,7 @@ data Exp = Add Exp Exp
          | Sub Exp Exp
          | Mul Exp Exp
          | Div Exp Exp
+         | Not Exp
          | Const Int
          | Var String
          | Boolean Bool 
