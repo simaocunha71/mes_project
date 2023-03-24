@@ -21,6 +21,7 @@ instance StrategicData Par
 instance StrategicData Func
 instance StrategicData a => StrategicData [a]
 
+-- ## Optimazations
 
 -- Aplica a otmização do elemento neutro das operações à AST
 applyOptimizations :: Program -> Program
@@ -49,19 +50,24 @@ loopImprove (For [] r2 [] r4) = Just (While r2 r4)
 loopImprove (For r1 r2 r3 r4) = Just (Sequence (r1 ++ [(While r2 (r3 ++ r4))]))
 loopImprove _ = Nothing
 
+-- ## Smells
 
--- -- Identifica e faz refctoring de smells
--- smellRefactor :: Program -> Program
--- smellRefactor code = 
---     let codeZipper = toZipper code
---         (Just newCode) = applyTU (full_tdTU  step ) codeZipper
---             where step = failTU `adhocTU` 
---         in 
---         newCode
+-- Identifica e faz refctoring de smells
+smellRefactor :: Program -> Program
+smellRefactor code = 
+    let codeZipper = toZipper code
+        (Just newCode) = applyTP (innermost  step ) codeZipper
+            where step = failTP `adhocTP` booleanLiterals
+        in 
+        fromZipper newCode
 
--- -- Corrige if ( f1() ) { return True } else {return False} ⇒ return f1()
--- booleanLiterals :: Exp -> Maybe Exp
--- booleanLiterals 
+-- Refactor do smell: if ( f1() ) { return True } else {return False}
+booleanLiterals :: Stat -> Maybe Stat
+booleanLiterals (ITE (ExpFunctionCall name args) [Return (Boolean _)] [Return (Boolean _)]) = Just (Return (ExpFunctionCall name args))
+booleanLiterals _ = Nothing
+
+
+-- ## Bugs
 
 -- Agrega bugs numa lista
 bugTrack :: Program -> [Int]
@@ -76,14 +82,6 @@ subZero:: Exp -> Maybe [Int]
 subZero (Div e (Const 0)) = Just [1]
 subZero _ = Nothing
 
--- -- Agrega smells numa lista
--- smellTrack :: Program -> [Int]
--- bugTrack code = 
---     let codeZipper = toZipper code
---         (Just newCode) = applyTU (full_tdTU  step ) codeZipper
---             where step = failTU `adhocTU` 
---         in 
---         newCode
 
 
 

@@ -128,6 +128,11 @@ pFuncCall = f <$> ident <*> (symbol' '(') <*>  pArgs  <*> (symbol' ')')
             where 
                 f r1 r2 r3 r4 = FunctionCall r1 r3
 
+pExpFuncCall :: Parser Exp 
+pExpFuncCall = f <$> ident <*> (symbol' '(') <*>  pArgs  <*> (symbol' ')') 
+            where 
+                f r1 r2 r3 r4  = ExpFunctionCall r1 r3
+
 pArgs :: Parser [Exp]
 pArgs = f <$> pExp <*> (symbol' ',')  <*> pArgs
     <|> g <$> pExp 
@@ -191,15 +196,16 @@ pReturn = f <$> token' "return" <*> pExp <*> symbol' ';'
           f r1 r2 r3 = Return r2
 
 
-
 pCond :: Parser Exp
-pCond =  a  <$> pNestedCond <*> token' "==" <*> pCond
+pCond =  a0 <$> pExpFuncCall <*> symbol' ';'
+          <|> a  <$> pNestedCond <*> token' "==" <*> pCond
           <|> b  <$> pNestedCond <*> token' "||" <*> pCond
           <|> c  <$> pNestedCond <*> token' "&&" <*> pCond
           <|> d  <$> pNestedCond <*> token' "<" <*> pCond
           <|> e  <$> pNestedCond <*> token' ">" <*> pCond
           <|> f  <$> pNestedCond
-        where a x _ z = EqualsTo x z
+        where a0 r1 r2 = r1
+              a x _ z = EqualsTo x z
               b x _ z = Or x z
               c x _ z = And x z
               d x _ z = LessThen x z
