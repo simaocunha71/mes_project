@@ -23,3 +23,5 @@ test_10 = "void function (int x, char c){int i;for(int i = 0; i <= 10; i=i+1){if
 test_11 = "void f(){ if(h();){return True;}else{return False;}}"
 
 test_12 = "int calcula(int x){while (!True){int x;}}"
+
+test_13 = "void f(int x,string y){int x = 2; if(! x>2 ){ y = y + 1;}else{x = x + 1;}}"

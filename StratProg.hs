@@ -57,15 +57,19 @@ smellRefactor :: Program -> Program
 smellRefactor code = 
     let codeZipper = toZipper code
         (Just newCode) = applyTP (innermost  step ) codeZipper
-            where step = failTP `adhocTP` booleanLiterals
+            where step = failTP `adhocTP` booleanLiterals `adhocTP` ifNot
         in 
         fromZipper newCode
 
--- Refactor do smell: if ( f1() ) { return True } else {return False}
+-- Refactor smell: if ( f1() ) { return True } else {return False}
 booleanLiterals :: Stat -> Maybe Stat
 booleanLiterals (ITE (ExpFunctionCall name args) [Return (Boolean _)] [Return (Boolean _)]) = Just (Return (ExpFunctionCall name args))
 booleanLiterals _ = Nothing
 
+-- Refactor smell: if (not …) { b1 } else { b2 } ⇒ if (..) { b2 } else { b1 }
+ifNot :: Stat -> Maybe Stat
+ifNot (ITE (Not exp) cod1 cod2) = Just (ITE (exp) cod2 cod1)
+ifNot _ = Nothing
 
 -- ## Bugs
 
