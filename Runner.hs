@@ -5,6 +5,8 @@ import LanguageUnparser
 import StratProg
 import Ast
 import Tests
+import TestGenerator
+import Test.QuickCheck
 
 
 -- Normal parsing
@@ -32,5 +34,11 @@ applyRefactor p = smellRefactor p
 bugCount :: String -> Int
 bugCount s = length $ bugTrack  $ parse s
 
+-- Automated Test Case Generation
+autoTestCaseGen :: IO Program
+autoTestCaseGen = generate genProgram
+
+unparseAutoTestCase :: IO Program ->  IO String
+unparseAutoTestCase ioProg = ioProg >>= return . unparse
 
 
