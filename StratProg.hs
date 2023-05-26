@@ -71,10 +71,21 @@ ifNot :: Stat -> Maybe Stat
 ifNot (ITE (Not exp) cod1 cod2) = Just (ITE (exp) cod2 cod1)
 ifNot _ = Nothing
 
+-- -- Identifica smells
+-- smellDetector :: Program -> [String]
+-- smellDetector code = 
+--     let codeZipper = toZipper code
+--         (Just newCode) = applyTU (innermost  step ) codeZipper
+--             where step = failTU ........
+--         in 
+--         fromZipper newCode
+
+
+
 -- ## Bugs
 
 -- Agrega bugs numa lista
-bugTrack :: Program -> [Int]
+bugTrack :: Program -> [String]
 bugTrack code = 
     let codeZipper = toZipper code
         (Just newCode) = applyTU (full_tdTU  step ) codeZipper
@@ -82,11 +93,49 @@ bugTrack code =
         in 
         newCode
 
-subZero:: Exp -> Maybe [Int]
-subZero (Div e (Const 0)) = Just [1]
+subZero:: Exp -> Maybe [String]
+subZero (Div e (Const 0)) = Just ["subZero"]
 subZero _ = Nothing
 
+----
+
+                    -- Function name, Vars declared, Vars used
+gatherData :: Program -> [(String,[String],[String])]
+gatherData  code = 
+    let codeZipper = toZipper code
+        (Just newCode) = applyTU (full_tdTU  step ) codeZipper
+            where step = failTU `adhocTU` varsDeclaration
+        in 
+        newCode
+
+varsDeclaration :: Func -> Maybe [(String,[String],[String])]
+varsDeclaration (FunctionDeclaration _ funcName _ stats) = Just [(funcName,gatherDecls stats,gatherUsed stats)]
+varsDeclaration _ = Just []
 
 
+gatherDecls :: [Stat] -> [String]
+gatherDecls code = 
+    let codeZipper = toZipper code
+        (Just newCode) = applyTU (full_tdTU  step ) codeZipper
+            where step = failTU `adhocTU` groupDecls
+        in 
+        newCode
 
+gatherUsed :: [Stat] -> [String]
+gatherUsed code = 
+    let codeZipper = toZipper code
+        (Just newCode) = applyTU (full_tdTU  step ) codeZipper
+            where step = failTU `adhocTU` groupUsed
+        in 
+        newCode
+
+
+groupDecls :: Stat -> Maybe [String]
+groupDecls (Declare _ name) = Just [name]
+groupDecls (DeclAssign _ name _) = Just [name]
+groupDecls _ = Just []
+
+groupUsed :: Exp -> Maybe [String]
+groupUsed (Var name) = Just [name]
+groupUsed _ = Just []
 

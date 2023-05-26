@@ -35,8 +35,9 @@ bugCount :: String -> Int
 bugCount s = length $ bugTrack  $ parse s
 
 -- Automated Test Case Generation
-autoTestCaseGen :: IO Program
-autoTestCaseGen = generate genProgram
+
+autoTestCaseGen :: Int -> Int -> Int -> IO Program
+autoTestCaseGen maxNumFuncs maxNumStatements maxExpDepth = generate (genProgram maxNumFuncs maxNumStatements maxExpDepth)
 
 unparseAutoTestCase :: IO Program ->  IO String
 unparseAutoTestCase ioProg = ioProg >>= return . unparse
