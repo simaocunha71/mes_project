@@ -42,4 +42,3 @@ autoTestCaseGen maxNumFuncs maxNumStatements maxExpDepth = generate (genProgram 
 unparseAutoTestCase :: IO Program ->  IO String
 unparseAutoTestCase ioProg = ioProg >>= return . unparse
 
-

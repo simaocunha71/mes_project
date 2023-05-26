@@ -7,7 +7,10 @@ import Data.Char
 
 -- Generator for Type
 genType :: Gen Type
-genType = elements [Int, Char, String, Void]
+genType = elements [Int, Char, String]
+
+genFuncType :: Gen Type
+genFuncType = elements [Int, Char, String, Void]
 
 genStr :: Gen String
 genStr = do
@@ -47,8 +50,32 @@ genExps usedNames maxExpDepth = do
 -- Generator for Exp
 genExpWithDepth :: [String] -> Int -> Gen Exp
 genExpWithDepth usedNames depth = do 
-  if depth <= 1 then  oneof [Const <$> genInt,Var <$> elements usedNames,Boolean <$> genBool]
-  else  oneof
+  -- Can only used declared vars in expressions
+  if null usedNames
+    then 
+      if depth <= 1 
+        then  oneof [Const <$> genInt,Boolean <$> genBool]
+      else  oneof
+        [  Add <$> genExpWithDepth usedNames (depth - 1) <*> genExpWithDepth usedNames (depth - 1)
+        ,  Sub <$> genExpWithDepth usedNames (depth - 1) <*> genExpWithDepth usedNames (depth - 1)
+        ,  Mul <$> genExpWithDepth usedNames (depth - 1) <*> genExpWithDepth usedNames (depth - 1)
+        ,  Div <$> genExpWithDepth usedNames (depth - 1) <*> genExpWithDepth usedNames (depth - 1)
+        ,  Not <$> genExpWithDepth usedNames (depth - 1)
+        ,  Const <$> genInt
+        ,  Boolean <$> genBool
+        ,  EqualsTo <$> genExpWithDepth usedNames (depth - 1) <*> genExpWithDepth usedNames (depth - 1)
+        ,  Or <$> genExpWithDepth usedNames (depth - 1) <*> genExpWithDepth usedNames (depth - 1)
+        ,  And <$> genExpWithDepth usedNames (depth - 1) <*> genExpWithDepth usedNames (depth - 1)
+        ,  LessThen <$> genExpWithDepth usedNames (depth - 1) <*> genExpWithDepth usedNames (depth - 1)
+        ,  MoreThen <$> genExpWithDepth usedNames (depth - 1) <*> genExpWithDepth usedNames (depth - 1)
+        ,  LessEqualThen <$> genExpWithDepth usedNames (depth - 1) <*> genExpWithDepth usedNames (depth - 1)
+        ,  MoreEqualThen <$> genExpWithDepth usedNames (depth - 1) <*> genExpWithDepth usedNames (depth - 1)
+        ]
+    else if depth <= 1 
+      then  
+        oneof [Const <$> genInt,Var <$> elements usedNames,Boolean <$> genBool]
+    else 
+       oneof
     [  Add <$> genExpWithDepth usedNames (depth - 1) <*> genExpWithDepth usedNames (depth - 1)
     ,  Sub <$> genExpWithDepth usedNames (depth - 1) <*> genExpWithDepth usedNames (depth - 1)
     ,  Mul <$> genExpWithDepth usedNames (depth - 1) <*> genExpWithDepth usedNames (depth - 1)
@@ -82,7 +109,7 @@ genStatWithDepth usedNames maxNumStatements depth =
   else if (null usedNames )
     then 
       oneof
-      [ Declare <$> genType <*> genUniqueName usedNames
+      [  Declare <$> genType <*> genUniqueName usedNames
       ,  DeclAssign <$> genType <*> genUniqueName usedNames <*> genExpWithDepth usedNames 1
       ,  ITE <$> genExpWithDepth usedNames  1 <*> genStat usedNames maxNumStatements (depth - 1) <*> genStat usedNames maxNumStatements (depth - 1)
       ,  While <$> genExpWithDepth usedNames 1  <*> genStat usedNames maxNumStatements (depth - 1)
@@ -111,12 +138,13 @@ genFunc maxNumStatements maxExpDepth = do
   funcName <- genStr
   numParams <- choose (0, 5)
   usedNames <- vectorOf numParams genStr
+  functype <- genFuncType
   let parGen = genPar usedNames
   params <- vectorOf numParams parGen
   -- Number of statements to be generated
   numStatements <- choose (1, maxNumStatements)
   body <- genStat usedNames maxNumStatements maxExpDepth
-  return  (FunctionDeclaration Void funcName params body)
+  return  (FunctionDeclaration functype funcName params body)
 
 -- Generator for Program
 genProgram :: Int -> Int -> Int -> Gen Program
