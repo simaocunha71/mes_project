@@ -37,6 +37,16 @@ data Type = Int
           | Void
           deriving (Show, Data)
 
+
+-- Data type of mutations
+data Mutation = TwoExpMut
+              | OneExpMut
+              | ConstMut
+              | VarMut
+              | BooleanMut
+              deriving (Show, Data)
+
+
 -- Data type of expressions
 data Exp = Add Exp Exp
          | Sub Exp Exp
@@ -55,8 +65,4 @@ data Exp = Add Exp Exp
          | MoreEqualThen Exp Exp
          | ExpFunctionCall String [Exp] 
          deriving (Show, Data)
-
-
-
-
 
