@@ -25,10 +25,24 @@ showPar :: Par -> String
 showPar (Parameter t name) = (showType t) ++ " " ++ name
 
 
+
+showForStat :: Stat -> String
+showForStat (Assign var exp) = var ++ " = " ++ (showExp exp) 
+showForStat (Declare t var) = (showType t) ++ " " ++ var 
+showForStat (DeclAssign t var exp) = (showType t) ++ " " ++ var ++ " = " ++ (showExp exp)
+
+showForStats :: [Stat] -> String
+showForStats [h] = (showForStat h)
+showForStats [] = ""
+showForStats (h:t) = (showForStat h) ++ "," ++ (showForStats t)
+
 showStats :: [Stat] -> String
 showStats [h] = (showStat h)
 showStats [] = ""
 showStats (h:t) = (showStat h) ++ " " ++ (showStats t)
+
+
+
 
 showStat :: Stat -> String
 showStat (Assign var exp) = var ++ " = " ++ (showExp exp) ++ ";"
@@ -36,7 +50,7 @@ showStat (Declare t var) = (showType t) ++ " " ++ var ++ ";"
 showStat (DeclAssign t var exp) = (showType t) ++ " " ++ var ++ " = " ++ (showExp exp) ++ ";"
 showStat (ITE exp stat1 stat2) = "if(" ++ (showExp exp) ++ "){" ++ (showStats stat1) ++ "}else{" ++  (showStats stat2) ++ "}"
 showStat (While exp stat) = "while(" ++ (showExp exp) ++ "){" ++ (showStats stat) ++ "}"
-showStat (For stat1 exp stat2 stat3) = "for(" ++ (showStats stat1) ++ (showExp exp) ++ ";" ++ (showStats stat2) ++ "){" ++ (showStats stat3) ++ "}" 
+showStat (For stat1 exp stat2 stat3) = "for(" ++ (showForStats stat1) ++ ";" ++ (showExp exp) ++ ";" ++ (showForStats stat2) ++ "){" ++ (showStats stat3) ++ "}" 
 showStat (FunctionCall name args) = name ++ "(" ++ (showArgs args) ++ ");"
 showStat (Sequence [e]) = showStat e ++ ";"
 showStat (Sequence (h:t)) = showStat h ++ ";" ++ showStat (Sequence t)

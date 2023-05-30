@@ -79,12 +79,19 @@ instance Eq Func where
 
 instance Eq Par where
   (Parameter type1 name1) == (Parameter type2 name2) = type1 == type2 && name1 == name2
-  _ == _ = False
+  _ == _ = True
 
 instance Eq Stat where
-  (Assign name1 exp1) == (Assign name2 exp2) = name1 == name2 && exp1 == exp2
-  (Declare type1 name1) == (Declare type2 name2) = type1 == type2 && name1 == name2 
-  _ == _ = False
+  (Assign s1 exp1) == (Assign s2 exp2) = s1 == s2 && exp1 == exp2
+  (Declare t1 s1) == (Declare t2 s2) = t1 == t2 && s1 == s2
+  (DeclAssign t1 s1 exp1) == (DeclAssign t2 s2 exp2) = t1 == t2 && s1 == s2 && exp1 == exp2
+  (ITE exp1 stats1a stats1b) == (ITE exp2 stats2a stats2b) = exp1 == exp2 && stats1a == stats2a && stats1b == stats2b
+  (While exp1 stats1) == (While exp2 stats2) = exp1 == exp2 && stats1 == stats2
+  (For init1 cond1 update1 stats1) == (For init2 cond2 update2 stats2) = init1 == init2 && cond1 == cond2 && update1 == update2 && stats1 == stats2
+  (FunctionCall s1 exps1) == (FunctionCall s2 exps2) = s1 == s2 && exps1 == exps2
+  (Sequence stats1) == (Sequence stats2) = stats1 == stats2
+  (Return exp1) == (Return exp2) = exp1 == exp2
+  _ == _ = True
 
 instance Eq Type where
   Int == Int = True
@@ -110,4 +117,4 @@ instance Eq Exp where
   LessEqualThen exp1 exp2 == LessEqualThen exp1' exp2' = exp1 == exp1' && exp2 == exp2'
   MoreEqualThen exp1 exp2 == MoreEqualThen exp1' exp2' = exp1 == exp1' && exp2 == exp2'
   ExpFunctionCall str exps == ExpFunctionCall str' exps' = str == str' && exps == exps'
-  _ == _ = False
+  _ == _ = True

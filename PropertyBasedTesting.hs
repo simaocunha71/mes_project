@@ -7,3 +7,4 @@ import Ast
 
 prop_PrintParse :: String -> Bool
 prop_PrintParse prog = parse prog == parse (unparse (parse prog))
+
