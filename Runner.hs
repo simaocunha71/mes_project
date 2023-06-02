@@ -7,7 +7,7 @@ import Ast
 import Tests
 import TestGenerator
 import Test.QuickCheck
-
+import MutatorGenerator
 
 -- Normal parsing
 parse :: String -> Program
@@ -39,6 +39,8 @@ bugCount s = length $ bugTrack  $ parse s
 autoTestCaseGen :: Int -> Int -> Int -> IO Program
 autoTestCaseGen maxNumFuncs maxNumStatements maxExpDepth = generate (genProgram maxNumFuncs maxNumStatements maxExpDepth)
 
+programMutationsGen :: Program -> Gen Program
+programMutationsGen program = genProgramMutations program
 
 unparseAutoTestCase :: IO Program ->  IO String
 unparseAutoTestCase ioProg = ioProg >>= return . unparse

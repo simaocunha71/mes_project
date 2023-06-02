@@ -19,9 +19,6 @@ import StratProg
 import System.IO.Unsafe
 -- Catalogo de mutantes exp
 
-genMutation :: Gen Mutation
-genMutation = elements [TwoExpMut,OneExpMut,ConstMut,VarMut,BooleanMut]
-
 mutateTwoExp :: Exp -> Exp -> Gen Exp
 mutateTwoExp e1 e2 = elements[Add e1 e2,Sub e1 e2, Mul e1 e2, Div e1 e2,EqualsTo e1 e2,
  Or e1 e2, And e1 e2, LessThen e1 e2, MoreThen e1 e2, LessEqualThen e1 e2, MoreEqualThen e1 e2]
@@ -42,35 +39,6 @@ mutateVarExp size = do
     newVal <- randomStringGen size
     return (Var newVal)
 
-generate' = unsafePerformIO.generate
-
-
--- Mutar arvore com mutações inseridas
-{-
-mutationOp :: Exp -> Mutation -> Maybe Exp
-mutationOp exp TwoExpMut = case exp of
-    Add e1 e2           -> Just $ generate' $ mutateTwoExp e1 e2
-    Sub e1 e2           -> Just $ generate' $ mutateTwoExp e1 e2
-    Mul e1 e2           -> Just $ generate' $ mutateTwoExp e1 e2
-    Div e1 e2           -> Just $ generate' $ mutateTwoExp e1 e2
-    EqualsTo e1 e2      -> Just $ generate' $ mutateTwoExp e1 e2
-    Or e1 e2            -> Just $ generate' $ mutateTwoExp e1 e2
-    And e1 e2           -> Just $ generate' $ mutateTwoExp e1 e2
-    LessThen e1 e2      -> Just $ generate' $ mutateTwoExp e1 e2
-    MoreThen e1 e2      -> Just $ generate' $ mutateTwoExp e1 e2
-    LessEqualThen e1 e2 -> Just $ generate' $ mutateTwoExp e1 e2
-    MoreEqualThen e1 e2 -> Just $ generate' $ mutateTwoExp e1 e2
-mutationOp exp OneExpMut = case exp of
-    Not e           -> Just e
-mutationOp exp ConstMut = case exp of
-    Const val           -> Just $ generate' $ mutateConstExp val
-mutationOp exp VarMut = case exp of
-    Var val           -> Just $ generate' $ mutateVarExp $ length $ val
-mutationOp exp BooleanMut = case exp of
-    Boolean True -> Just (Boolean False)
-    Boolean False -> Just (Boolean True) 
-mutationOp _ _ = Nothing
--}
 
 mutateExp :: Exp -> Gen Exp
 mutateExp (Sub e1 e2) = mutateTwoExp e1 e2
@@ -88,7 +56,23 @@ mutateExp (Const val) = mutateConstExp val
 mutateExp (Var val) = mutateVarExp $ length $ val
 mutateExp (Boolean True) = return (Boolean False)
 mutateExp (Boolean False) = return (Boolean True)
-mutateExp e = return e
+mutateExp e = return e -- shouldnt happen because we cover all exps
+
+
+--Gerador de programas mutados (a partir de um original)
+genProgramMutations :: Program -> Gen Program
+genProgramMutations code = do
+    mutation <- produceMutationExpProgram code
+    let codeZipper = toZipper code
+        (Just newCode) = applyTP (once_tdTP step) codeZipper
+            where step = failTP `adhocTP` (applyMutation mutation)
+    return (fromZipper newCode)
+
+
+applyMutation :: (Exp, Exp) -> Exp -> Maybe Exp
+applyMutation (originalExp, mutation) exp'
+  | exp' == originalExp = Just mutation
+  | otherwise = Nothing
 
 
 --Escolhe uma expressão para mutar

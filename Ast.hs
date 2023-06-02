@@ -38,17 +38,6 @@ data Type = Int
           | Void
           deriving (Show, Data)
 
-
-
--- Data type of mutations
-data Mutation = TwoExpMut
-              | OneExpMut
-              | ConstMut
-              | VarMut
-              | BooleanMut
-              deriving (Show, Data)
-
-
 -- Data type of expressions
 data Exp = Add Exp Exp
          | Sub Exp Exp
@@ -67,7 +56,6 @@ data Exp = Add Exp Exp
          | MoreEqualThen Exp Exp
          | ExpFunctionCall String [Exp] 
          deriving (Show, Data)
-
 
 instance Eq Program where
   (Prog funcs1) == (Prog funcs2) = funcs1 == funcs2
@@ -101,20 +89,20 @@ instance Eq Type where
   _ == _ = False
 
 instance Eq Exp where
-  Add exp1 exp2 == Add exp1' exp2' = exp1 == exp1' && exp2 == exp2'
-  Sub exp1 exp2 == Sub exp1' exp2' = exp1 == exp1' && exp2 == exp2'
-  Mul exp1 exp2 == Mul exp1' exp2' = exp1 == exp1' && exp2 == exp2'
-  Div exp1 exp2 == Div exp1' exp2' = exp1 == exp1' && exp2 == exp2'
-  Not exp == Not exp' = exp == exp'
-  Const int == Const int' = int == int'
-  Var str == Var str' = str == str'
-  Boolean bool == Boolean bool' = bool == bool'
-  EqualsTo exp1 exp2 == EqualsTo exp1' exp2' = exp1 == exp1' && exp2 == exp2'
-  Or exp1 exp2 == Or exp1' exp2' = exp1 == exp1' && exp2 == exp2'
-  And exp1 exp2 == And exp1' exp2' = exp1 == exp1' && exp2 == exp2'
-  LessThen exp1 exp2 == LessThen exp1' exp2' = exp1 == exp1' && exp2 == exp2'
-  MoreThen exp1 exp2 == MoreThen exp1' exp2' = exp1 == exp1' && exp2 == exp2'
-  LessEqualThen exp1 exp2 == LessEqualThen exp1' exp2' = exp1 == exp1' && exp2 == exp2'
-  MoreEqualThen exp1 exp2 == MoreEqualThen exp1' exp2' = exp1 == exp1' && exp2 == exp2'
-  ExpFunctionCall str exps == ExpFunctionCall str' exps' = str == str' && exps == exps'
-  _ == _ = True
+  (Add e1 e2) == (Add e3 e4) = e1 == e3 && e2 == e4
+  (Sub e1 e2) == (Sub e3 e4) = e1 == e3 && e2 == e4
+  (Mul e1 e2) == (Mul e3 e4) = e1 == e3 && e2 == e4
+  (Div e1 e2) == (Div e3 e4) = e1 == e3 && e2 == e4
+  (Not e1) == (Not e2) = e1 == e2
+  (Const n1) == (Const n2) = n1 == n2
+  (Var v1) == (Var v2) = v1 == v2
+  (Boolean b1) == (Boolean b2) = b1 == b2
+  (EqualsTo e1 e2) == (EqualsTo e3 e4) = e1 == e3 && e2 == e4
+  (Or e1 e2) == (Or e3 e4) = e1 == e3 && e2 == e4
+  (And e1 e2) == (And e3 e4) = e1 == e3 && e2 == e4
+  (LessThen e1 e2) == (LessThen e3 e4) = e1 == e3 && e2 == e4
+  (MoreThen e1 e2) == (MoreThen e3 e4) = e1 == e3 && e2 == e4
+  (LessEqualThen e1 e2) == (LessEqualThen e3 e4) = e1 == e3 && e2 == e4
+  (MoreEqualThen e1 e2) == (MoreEqualThen e3 e4) = e1 == e3 && e2 == e4
+  (ExpFunctionCall f1 args1) == (ExpFunctionCall f2 args2) = f1 == f2 && args1 == args2
+  _ == _ = False
