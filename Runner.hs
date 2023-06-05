@@ -8,6 +8,7 @@ import Tests
 import TestGenerator
 import Test.QuickCheck
 import MutatorGenerator
+import PropertyBasedTesting
 
 -- Normal parsing
 parse :: String -> Program
@@ -34,6 +35,10 @@ applyRefactor p = smellRefactor p
 bugCount :: String -> Int
 bugCount s = length $ bugTrack  $ parse s
 
+-- Gather data
+gatherProgramData :: String -> [(String,[String],[String])]
+gatherProgramData s = gatherData $ parse s
+
 -- Automated Test Case Generation and parsing
 
 autoTestCaseGen :: Int -> Int -> Int -> IO Program
@@ -44,4 +49,9 @@ programMutationsGen program = genProgramMutations program
 
 unparseAutoTestCase :: IO Program ->  IO String
 unparseAutoTestCase ioProg = ioProg >>= return . unparse
+
+-- Property based testing
+-- prop_PrintParse
+-- prop_OptInnermostTP
+-- prop_SmellCommutativeOpt
 

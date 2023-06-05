@@ -20,7 +20,7 @@ test_9 = "int calcula(int x){while(0){int x;} for(;2;){int x;}}"
 
 test_10 = "void function (int x, char c){int i;for(int i = 0; i <= 10; i=i+1){if(i + x < 3){while(i < 7){i=i-1;}}else{for(;i < 3;){x = 4 + i;}}}c = 0;}" 
 
-test_11 = "void f(){ if(h();){return True;}else{return False;}}"
+test_11 = "void f(){ int x = 2 + 0 + 0; if(h();){return True;}else{return False;}} void f(int x,string y){int x = 2 + 0 + 0;}"
 
 test_12 = "int calcula(int x){while (!True){int x;}}"
 

@@ -23,7 +23,7 @@ instance StrategicData a => StrategicData [a]
 
 -- ## Optimazations
 
--- Aplica a otmização do elemento neutro das operações à AST
+-- Aplição de otimizações em innermost
 applyOptimizations :: Program -> Program
 applyOptimizations code = 
     let codeZipper = toZipper code
@@ -50,6 +50,30 @@ loopImprove (For [] r2 [] r4) = Just (While r2 r4)
 loopImprove (For r1 r2 r3 r4) = Just (Sequence (r1 ++ [(While r2 (r3 ++ r4))]))
 loopImprove _ = Nothing
 
+-- Aplicação de otimizações em topdown
+applyOptimizationsTD :: Program -> Program
+applyOptimizationsTD code = 
+    let codeZipper = toZipper code
+        (Just newCode) = applyTP (full_tdTP step ) codeZipper
+            where step = idTP `adhocTP` expNeutralOpTD `adhocTP` loopImproveTD
+        in 
+        fromZipper newCode
+
+expNeutralOpTD :: Exp -> Maybe Exp
+expNeutralOpTD (Add e (Const 0)) = Just e
+expNeutralOpTD (Add (Const 0) t) = Just t 
+expNeutralOpTD (Mul e (Const 1)) = Just e
+expNeutralOpTD (Mul (Const 1) t) = Just t
+expNeutralOpTD e = Just e
+
+loopImproveTD :: Stat -> Maybe Stat
+loopImproveTD (While (Const 0) st) = Just (While (Boolean False) st)
+loopImproveTD (While (Const _) st) = Just (While (Boolean True) st)
+loopImproveTD (For r1 (Const 0) r3 r4) = Just (For r1 (Boolean False) r3 r4)
+loopImproveTD (For r1 (Const _) r3 r4) = Just (For r1 (Boolean True) r3 r4)
+loopImproveTD (For [] r2 [] r4) = Just (While r2 r4)
+loopImproveTD (For r1 r2 r3 r4) = Just (Sequence (r1 ++ [(While r2 (r3 ++ r4))]))
+loopImproveTD e = Just e
 -- ## Smells
 
 -- Identifica e faz refctoring de smells
@@ -57,7 +81,7 @@ smellRefactor :: Program -> Program
 smellRefactor code = 
     let codeZipper = toZipper code
         (Just newCode) = applyTP (innermost  step ) codeZipper
-            where step = failTP `adhocTP` booleanLiterals `adhocTP` ifNot
+            where step = failTP `adhocTP` ifNot `adhocTP` booleanLiterals
         in 
         fromZipper newCode
 
@@ -70,16 +94,6 @@ booleanLiterals _ = Nothing
 ifNot :: Stat -> Maybe Stat
 ifNot (ITE (Not exp) cod1 cod2) = Just (ITE (exp) cod2 cod1)
 ifNot _ = Nothing
-
--- -- Identifica smells
--- smellDetector :: Program -> [String]
--- smellDetector code = 
---     let codeZipper = toZipper code
---         (Just newCode) = applyTU (innermost  step ) codeZipper
---             where step = failTU ........
---         in 
---         fromZipper newCode
-
 
 
 -- ## Bugs
