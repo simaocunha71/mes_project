@@ -32,6 +32,39 @@ Este modulo disponibiliza as seguintes funções:
 
     ```applyOpts:: Program -> Program```
     
+- Parse de um input com smell refactoring
+ 
+  ```parseWithRefactor :: String -> Program```
+  
+- Aplica à ast smell refactoring
+
+  ```applyRefactor :: Program -> Program```
+  
+ - Parse de um input indicando o número de bugs
+ 
+   ```bugCount :: String -> Int```   
+   
+ - Parse de um input retornando para cada programa as funções declaradas e em cada função as variáveis que foram
+declaradas e usadas
+
+   ```gatherProgramData :: String -> [(String,[String],[String])]```
+ 
+ - Gerador automático de casos de teste
+ 
+   ```autoTestCaseGen :: Int -> Int -> Int -> IO Program```
+   
+  - Gerador de mutantes
+
+    ```programMutationsGen :: Program -> Gen Program```
+    
+  - Teste de propriedades
+  
+    ```prop_PrintParse :: String -> Bool```
+    
+    ```prop_OptInnermostTP :: String -> Bool```
+    
+    ```prop_SmellCommutativeOpt :: String -> Bool```
+   
 ### Otimizações desenvolvidas até ao momento:
 
   1. Elemento neutro das operações
