@@ -54,9 +54,3 @@ unparseAutoTestCase ioProg = ioProg >>= return . unparse
 -- prop_PrintParse
 -- prop_OptInnermostTP
 -- prop_SmellCommutativeOpt
-
-
-
-
-prop_OptInnermostTP2 :: Program -> Bool
-prop_OptInnermostTP2 prog = (applyOptimizations prog ) == (applyOptimizationsTD prog )

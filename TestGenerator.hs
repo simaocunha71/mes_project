@@ -134,7 +134,6 @@ genStatWithDepth numStat usedNames maxNumStatements depth = do
           , ITE <$> genExpWithDepth usedNames 1 <*> genStatWithDepth (numStat - 1) usedNames maxNumStatements (depth - 1) <*> genStatWithDepth (numStat - 1) usedNames maxNumStatements (depth - 1)
           , While <$> genExpWithDepth usedNames 1 <*> genStatWithDepth (numStat - 1) usedNames maxNumStatements (depth - 1)
           , For <$> genStatWithDepth (numStat - 1) usedNames maxNumStatements (depth - 1) <*> genExpWithDepth usedNames 1 <*> genStatWithDepth (numStat - 1) usedNames maxNumStatements (depth - 1) <*> genStatWithDepth (numStat - 1) usedNames maxNumStatements (depth - 1)
-          , FunctionCall <$> elements usedNames <*> genExps usedNames depth
           , Return <$> genExpWithDepth usedNames 1
           , Sequence <$> genStatWithDepth (numStat - 1) usedNames maxNumStatements (depth - 1)
           ]
@@ -186,4 +185,4 @@ genProgram maxNumFuncs maxNumStatements maxExpDepth = do
 
 
 instance Arbitrary Program where 
-  arbitrary = genProgram 1 3 5
+  arbitrary = genProgram 3 5 5
