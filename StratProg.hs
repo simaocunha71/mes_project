@@ -87,7 +87,7 @@ smellRefactor code =
 
 -- Refactor smell: if ( f1() ) { return True } else {return False}
 booleanLiterals :: Stat -> Maybe Stat
-booleanLiterals (ITE (ExpFunctionCall name args) [Return (Boolean _)] [Return (Boolean _)]) = Just (Return (ExpFunctionCall name args))
+booleanLiterals (ITE (e) [Return (Boolean True)] [Return (Boolean False)]) = Just (Return (e))
 booleanLiterals _ = Nothing
 
 -- Refactor smell: if (not …) { b1 } else { b2 } ⇒ if (..) { b2 } else { b1 }

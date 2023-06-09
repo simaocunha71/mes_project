@@ -185,4 +185,5 @@ genProgram maxNumFuncs maxNumStatements maxExpDepth = do
   Prog <$> vectorOf numFuncs (genFunc maxNumStatements maxExpDepth)
 
 
-
+instance Arbitrary Program where 
+  arbitrary = genProgram 1 3 5
