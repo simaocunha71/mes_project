@@ -52,6 +52,7 @@ showStat (ITE exp stat1 stat2) = "if(" ++ (showExp exp) ++ "){" ++ (showStats st
 showStat (While exp stat) = "while(" ++ (showExp exp) ++ "){" ++ (showStats stat) ++ "}"
 showStat (For stat1 exp stat2 stat3) = "for(" ++ (showForStats stat1) ++ ";" ++ (showExp exp) ++ ";" ++ (showForStats stat2) ++ "){" ++ (showStats stat3) ++ "}" 
 showStat (FunctionCall name args) = name ++ "(" ++ (showArgs args) ++ ");"
+showStat (Sequence []) = ""
 showStat (Sequence [e]) = showStat e ++ ";"
 showStat (Sequence (h:t)) = showStat h ++ ";" ++ showStat (Sequence t)
 showStat (Return e) = "return" ++ showExp e ++ ";"
