@@ -13,10 +13,18 @@ import Tests
 prop_PrintParse :: String -> Bool
 prop_PrintParse prog =  (fst $ head $ pProgram  prog ) == (fst $ head $ pProgram (showProgram (fst $ head $ pProgram prog)))
 
+
+prop_PrintParseProgram :: Program -> Bool
+prop_PrintParseProgram prog =  prog == (fst $ head $ pProgram (showProgram prog))
 -- Test if innermost and topdown have the same resulta eliminating smells
 prop_OptInnermostTP :: String -> Bool
 prop_OptInnermostTP prog = (applyOptimizations $ fst $ head $ pProgram prog ) == (applyOptimizationsTD $ fst $ head $ pProgram prog )
 
+prop_OptInnermostTPProg :: Program -> Bool
+prop_OptInnermostTPProg prog = (applyOptimizations $ prog ) == (applyOptimizationsTD $ prog )
 -- Test if smell recfactoring and expression optimization are commutative operations
 prop_SmellCommutativeOpt :: String -> Bool
 prop_SmellCommutativeOpt prog = (smellRefactor $ applyOptimizations $ fst $ head $ pProgram prog) == (applyOptimizations $ smellRefactor $ fst $ head $ pProgram prog)
+
+prop_SmellCommutativeOptProgram :: Program -> Bool
+prop_SmellCommutativeOptProgram prog = (smellRefactor $ applyOptimizations $ prog) == (applyOptimizations $ smellRefactor $ prog)

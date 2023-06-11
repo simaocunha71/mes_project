@@ -185,4 +185,4 @@ genProgram maxNumFuncs maxNumStatements maxExpDepth = do
 
 
 instance Arbitrary Program where 
-  arbitrary = genProgram 3 5 5
+  arbitrary = genProgram 3 10 10
