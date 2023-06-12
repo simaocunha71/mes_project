@@ -1,5 +1,7 @@
 ### Trabalho prático da UC de Manutenção e Evolução de Software - 2022/2023
 
+Relatório: [aqui](https://github.com/simaocunha71/mes_project/blob/main/relatorio.pdf)
+
 #### Grupo 10
 
 Simão Cunha (a93262)
