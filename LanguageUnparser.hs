@@ -55,7 +55,7 @@ showStat (FunctionCall name args) = name ++ "(" ++ (showArgs args) ++ ");"
 showStat (Sequence []) = ""
 showStat (Sequence [e]) = showStat e ++ ";"
 showStat (Sequence (h:t)) = showStat h ++ ";" ++ showStat (Sequence t)
-showStat (Return e) = "return" ++ showExp e ++ ";"
+showStat (Return e) = "return " ++ showExp e ++ ";"
 
 showArgs :: [Exp] -> String
 showArgs [h] = (showExp h)
@@ -75,18 +75,18 @@ showExps (h:t) = (showExp h) ++ " " ++ (showExps t)
 
 
 showExp :: Exp -> String
-showExp (Add i1 i2) = (showExp i1) ++ "+" ++ (showExp i2)
-showExp (Sub i1 i2) = (showExp i1) ++ "-" ++ (showExp i2)
-showExp (Mul i1 i2) = (showExp i1) ++ "*" ++ (showExp i2)
-showExp (Div i1 i2) = (showExp i1) ++ "/" ++ (showExp i2)
+showExp (Add i1 i2) = "(" ++ (showExp i1) ++ "+"  ++ (showExp i2) ++ ")"
+showExp (Sub i1 i2) = "(" ++ (showExp i1) ++ "-"  ++ (showExp i2) ++ ")"
+showExp (Mul i1 i2) = "(" ++(showExp i1)  ++ "*"  ++(showExp i2) ++ ")"
+showExp (Div i1 i2) = "(" ++ (showExp i1)  ++ "/"  ++(showExp i2) ++ ")"
 showExp (Const i1) =  show i1
 showExp (Var i1 ) =   i1
 showExp (Boolean i1 ) = show i1
-showExp (EqualsTo i1 i2) = (showExp i1) ++ "==" ++ (showExp i2)
-showExp (Or i1 i2) = (showExp i1) ++ "||" ++ (showExp i2)
-showExp (And i1 i2) = (showExp i1) ++ "&&" ++ (showExp i2)
-showExp (LessThen i1 i2) = (showExp i1) ++ "<" ++ (showExp i2)
-showExp (MoreThen i1 i2) = (showExp i1) ++ ">" ++ (showExp i2)
-showExp (LessEqualThen i1 i2) = (showExp i1) ++ "<=" ++ (showExp i2)
-showExp (MoreEqualThen i1 i2) = (showExp i1) ++ ">=" ++ (showExp i2)
+showExp (EqualsTo i1 i2) = "(" ++ (showExp i1) ++ "=="  ++ (showExp i2) ++ ")"
+showExp (Or i1 i2) =  "(" ++ (showExp i1) ++ "||"  ++ (showExp i2)  ++ ")"
+showExp (And i1 i2) =  "(" ++ (showExp i1)  ++ "&&" ++ (showExp i2)  ++ ")"
+showExp (LessThen i1 i2) =  "(" ++ (showExp i1)   ++ "<" ++  (showExp i2)  ++ ")"
+showExp (MoreThen i1 i2) =  "(" ++ (showExp i1) ++ ">" ++  (showExp i2)  ++ ")"
+showExp (LessEqualThen i1 i2) =  "(" ++ (showExp i1)  ++ "<=" ++  (showExp i2)  ++ ")"
+showExp (MoreEqualThen i1 i2) =  "(" ++ (showExp i1)  ++ ">=" ++  (showExp i2)  ++ ")"
 showExp (ExpFunctionCall name args) = name ++ "(" ++ (showArgs args) ++ ");"

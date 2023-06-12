@@ -93,7 +93,6 @@ genExpWithDepth usedNames depth = do
     ,  MoreThen <$> genExpWithDepth usedNames (depth - 1) <*> genExpWithDepth usedNames (depth - 1)
     ,  LessEqualThen <$> genExpWithDepth usedNames (depth - 1) <*> genExpWithDepth usedNames (depth - 1)
     ,  MoreEqualThen <$> genExpWithDepth usedNames (depth - 1) <*> genExpWithDepth usedNames (depth - 1)
-    ,  ExpFunctionCall <$> elements usedNames <*> genExps usedNames (depth - 1)
     ]
 
 
@@ -113,7 +112,6 @@ getNameFromStat stat = case stat of
   While _ _ -> []
   For _ _ _ _ -> []
   FunctionCall name _ -> [name]
-  Sequence _ -> []
   Return _ -> []
 
 
@@ -133,13 +131,17 @@ genStatWithDepth numStat usedNames maxNumStatements depth = do
           , DeclAssign <$> genType <*> genUniqueName usedNames <*> genExpWithDepth usedNames 1
           , ITE <$> genExpWithDepth usedNames 1 <*> genStatWithDepth (numStat - 1) usedNames maxNumStatements (depth - 1) <*> genStatWithDepth (numStat - 1) usedNames maxNumStatements (depth - 1)
           , While <$> genExpWithDepth usedNames 1 <*> genStatWithDepth (numStat - 1) usedNames maxNumStatements (depth - 1)
-          , For <$> genStatWithDepth (numStat - 1) usedNames maxNumStatements (depth - 1) <*> genExpWithDepth usedNames 1 <*> genStatWithDepth (numStat - 1) usedNames maxNumStatements (depth - 1) <*> genStatWithDepth (numStat - 1) usedNames maxNumStatements (depth - 1)
+          , For <$> vectorOf 1 (genDecl usedNames depth) <*> genExpWithDepth usedNames 1 <*> vectorOf 1 (genAssign usedNames depth) <*> genStatWithDepth (numStat - 1) usedNames maxNumStatements (depth - 1)
           , Return <$> genExpWithDepth usedNames 1
-          , Sequence <$> genStatWithDepth (numStat - 1) usedNames maxNumStatements (depth - 1)
           ]
         let updatedUsedNames = usedNames ++ (getNameFromStat stat)
-        rest <- genStatWithDepth (numStat-1) updatedUsedNames maxNumStatements depth
-        return (stat : rest)
+        if isReturnStat stat
+          then do
+            rest <- genStatWithDepth 0 updatedUsedNames maxNumStatements depth
+            return (stat : rest)
+          else do
+            rest <- genStatWithDepth (numStat-1) updatedUsedNames maxNumStatements depth
+            return (stat : rest)
     else if depth <= 1
       then do
         stat <- oneof [Assign <$> elements usedNames <*> genExpWithDepth usedNames 1, Declare <$> genType <*> genUniqueName usedNames, DeclAssign <$> genType <*> genUniqueName usedNames <*> genExpWithDepth usedNames 1]
@@ -149,20 +151,30 @@ genStatWithDepth numStat usedNames maxNumStatements depth = do
     else do
       stat <- oneof
         [ Assign <$> elements usedNames <*> genExpWithDepth usedNames 1
-        , Declare <$> genType <*> genUniqueName usedNames
         , DeclAssign <$> genType <*> genUniqueName usedNames <*> genExpWithDepth usedNames 1
         , ITE <$> genExpWithDepth usedNames 1 <*> genStatWithDepth (numStat - 1) usedNames maxNumStatements (depth - 1) <*> genStatWithDepth (numStat - 1) usedNames maxNumStatements (depth - 1)
         , While <$> genExpWithDepth usedNames 1 <*> genStatWithDepth (numStat - 1) usedNames maxNumStatements (depth - 1)
-        , For <$> genStatWithDepth (numStat - 1) usedNames maxNumStatements (depth - 1) <*> genExpWithDepth usedNames 1 <*> genStatWithDepth (numStat - 1) usedNames maxNumStatements (depth - 1) <*> genStatWithDepth (numStat - 1) usedNames maxNumStatements (depth - 1)
+        , For <$> vectorOf 1 (genDecl usedNames depth) <*> genExpWithDepth usedNames 1 <*> vectorOf 1 (genAssign usedNames depth) <*> genStatWithDepth (numStat - 1) usedNames maxNumStatements (depth - 1)
         , FunctionCall <$> elements usedNames <*> genExps usedNames depth
         , Return <$> genExpWithDepth usedNames 1
-        , Sequence <$> genStatWithDepth (numStat - 1) usedNames maxNumStatements (depth - 1)
         ]
       let updatedUsedNames = usedNames ++ (getNameFromStat stat)
-      rest <- genStatWithDepth (numStat-1) updatedUsedNames maxNumStatements depth
-      return (stat : rest)
+      if isReturnStat stat
+        then do
+          rest <- genStatWithDepth 0 updatedUsedNames maxNumStatements depth
+          return (stat : rest)
+        else do
+          rest <- genStatWithDepth (numStat-1) updatedUsedNames maxNumStatements depth
+          return (stat : rest)
+  where
+    isReturnStat (Return _) = True
+    isReturnStat _ = False
 
+genDecl :: [String] -> Int -> Gen Stat
+genDecl usedNames maxExpDepth = oneof [Declare <$> genType <*> genStr , DeclAssign <$> genType <*> genStr <*> genExpWithDepth usedNames maxExpDepth]
 
+genAssign :: [String] -> Int -> Gen Stat
+genAssign usedNames maxExpDepth = Assign <$> genStr <*> genExpWithDepth usedNames maxExpDepth
 -- Generator for Func
 genFunc :: Int -> Int -> Gen Func
 genFunc maxNumStatements maxExpDepth = do
@@ -185,4 +197,4 @@ genProgram maxNumFuncs maxNumStatements maxExpDepth = do
 
 
 instance Arbitrary Program where 
-  arbitrary = genProgram 1 1 2
+  arbitrary = genProgram 1 4 4

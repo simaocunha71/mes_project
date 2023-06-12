@@ -16,6 +16,8 @@ prop_PrintParse prog =  (fst $ head $ pProgram  prog ) == (fst $ head $ pProgram
 
 prop_PrintParseProgram :: Program -> Bool
 prop_PrintParseProgram prog =  prog == (fst $ head $ pProgram (showProgram prog))
+
+temp_func prog = (fst $ head $ pProgram (showProgram prog))
 -- Test if innermost and topdown have the same resulta eliminating smells
 prop_OptInnermostTP :: String -> Bool
 prop_OptInnermostTP prog = (applyOptimizations $ fst $ head $ pProgram prog ) == (applyOptimizationsTD $ fst $ head $ pProgram prog )

@@ -109,7 +109,7 @@ bugTrack code =
 
 subZero:: Exp -> Maybe [String]
 subZero (Div e (Const 0)) = Just ["subZero"]
-subZero _ = Nothing
+subZero _ = Just []
 
 ----
 

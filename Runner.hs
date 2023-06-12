@@ -50,7 +50,7 @@ programMutationsGen program = genProgramMutations program
 unparseAutoTestCase :: IO Program ->  IO String
 unparseAutoTestCase ioProg = ioProg >>= return . unparse
 
--- Property based testing
+-- Property based testing (verificar ficheiro PropertyBasedTesting para propriedades que aceitam geradores)
 -- prop_PrintParse
 -- prop_OptInnermostTP
 -- prop_SmellCommutativeOpt
